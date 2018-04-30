@@ -16,9 +16,14 @@ object WordCount {
 
 
   def main(args: Array[String]): Unit = {
-    val sc = initSpark()
-    val result = process(args(0), sc)
-    persist(result, args(1))
+    println("Args length: " + args.length)
+
+    val sc = timed("Step 1 - Initializing Spark context", initSpark())
+    val result = timed("Step 2 - Executing the counting process", process(args(0), sc))
+    timed("Step 3 - Saving results", persist(result, args(1)))
+
+    println(timing)
+    sc.stop()
   }
 
   private def initSpark(master: String = "local[*]"): SparkContext = {
