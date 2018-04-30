@@ -1,5 +1,6 @@
 package org.sharpsw.spark
 
+import org.apache.spark.rdd.RDD
 import org.apache.spark.{SparkConf, SparkContext}
 
 object WordCount {
@@ -15,14 +16,24 @@ object WordCount {
 
 
   def main(args: Array[String]): Unit = {
-    val conf: SparkConf = new SparkConf().setAppName("Word count").setMaster("local[*]")
+    val sc = initSpark()
+    val result = process(args(0), sc)
+    persist(result, args(1))
+  }
+
+  private def initSpark(master: String = "local[*]"): SparkContext = {
+    val conf: SparkConf = new SparkConf().setAppName("Word count").setMaster(master)
     val sc: SparkContext = new SparkContext(conf)
+    sc
+  }
 
-    val input = sc.textFile(args(0))
-    val words = input.flatMap(line => line.split(" "))
-    val counts = words.map(word => (word, 1)).reduceByKey{case (x,y) => x + y}
-    counts.repartition(1).saveAsTextFile(args(1))
+  private def process(input: String, sc: SparkContext): RDD[(String, Int)] = {
+    val contents = sc.textFile(input)
+    val words = contents.flatMap(_.split(" "))
+    words.map(word => (word, 1)).reduceByKey{case (x, y) => x + y}
+  }
 
-    sc.stop()
+  private def persist(result: RDD[(String, Int)], destinationFolder: String): Unit = {
+    result.saveAsTextFile(destinationFolder)
   }
 }
