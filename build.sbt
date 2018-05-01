@@ -15,8 +15,8 @@ scalaVersion := "2.11.8"
 resolvers += Classpaths.typesafeReleases
 
 libraryDependencies ++= Seq(
-  "org.apache.spark" % "spark-core_2.11" % "2.2.1",
-  "org.apache.spark" % "spark-sql_2.11" % "2.2.1",
+  "org.apache.spark" % "spark-core_2.11" % "2.3.0",
+  "org.apache.spark" % "spark-sql_2.11" % "2.3.0",
   //"org.apache.hadoop" % "hadoop-aws" % "2.7.5",
   //"com.amazonaws" % "aws-java-sdk" % "1.7.4",
   scalaTest % Test
@@ -34,6 +34,7 @@ assemblyMergeStrategy in assembly := {
   case PathList("com", "yammer", xs @ _*) => MergeStrategy.last
   case PathList("org", "arrow", xs @ _*) => MergeStrategy.last
   case PathList("overview.html", xs @ _*) => MergeStrategy.last
+  case PathList("git.properties", xs @ _*) => MergeStrategy.last
   case "about.html" => MergeStrategy.rename
   case "META-INF/ECLIPSEF.RSA" => MergeStrategy.last
   case "META-INF/mailcap" => MergeStrategy.last
