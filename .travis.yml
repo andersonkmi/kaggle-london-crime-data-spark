@@ -1,0 +1,11 @@
+language: scala
+scala:
+    - 2.12.5
+jdk:
+    - oraclejdk8
+
+# safelist
+branches:
+  only:
+  - master
+  - develop
