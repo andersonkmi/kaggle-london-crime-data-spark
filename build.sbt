@@ -22,7 +22,7 @@ libraryDependencies ++= Seq(
   scalaTest % Test
 )
 
-assemblyMergeStrategy in assembly := {
+/*assemblyMergeStrategy in assembly := {
   case PathList("org","aopalliance", xs @ _*) => MergeStrategy.last
   case PathList("javax", "inject", xs @ _*) => MergeStrategy.last
   case PathList("javax", "servlet", xs @ _*) => MergeStrategy.last
@@ -47,3 +47,4 @@ assemblyMergeStrategy in assembly := {
 }
 
 assemblyJarName in assembly := appName + "-" + appVersion + ".jar"
+*/
