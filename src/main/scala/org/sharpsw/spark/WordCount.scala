@@ -14,31 +14,23 @@ object WordCount {
     result
   }
 
+  val sc:SparkContext = new SparkContext(new SparkConf().setAppName("WordCount").setMaster("local[*]"))
 
   def main(args: Array[String]): Unit = {
-    println("Args length: " + args.length)
-
-    val sc = timed("Step 1 - Initializing Spark context", initSpark())
-    val result = timed("Step 2 - Executing the counting process", process(args(0), sc))
+    val fileContents = sc.textFile(args(0))
+    val result = timed("Step 2 - Executing the counting process", countWords(fileContents))
     timed("Step 3 - Saving results", persist(result, args(1)))
 
     println(timing)
     sc.stop()
   }
 
-  private def initSpark(master: String = "local[*]"): SparkContext = {
-    val conf: SparkConf = new SparkConf().setAppName("Word count").setMaster(master)
-    val sc: SparkContext = new SparkContext(conf)
-    sc
-  }
-
-  private def process(input: String, sc: SparkContext): RDD[(String, Int)] = {
-    val contents = sc.textFile(input)
+  def countWords(contents: RDD[String]): RDD[(String, Int)] = {
     val words = contents.flatMap(_.split(" "))
     words.map(word => (word, 1)).reduceByKey{case (x, y) => x + y}
   }
 
-  private def persist(result: RDD[(String, Int)], destinationFolder: String): Unit = {
+  def persist(result: RDD[(String, Int)], destinationFolder: String): Unit = {
     result.saveAsTextFile(destinationFolder)
   }
 }
