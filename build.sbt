@@ -1,6 +1,6 @@
 import Dependencies._
 
-organization := "org.sharpsw.Spark"
+organization := "org.sharpsw.spark"
 
 name := "data-handling-spark"
 
