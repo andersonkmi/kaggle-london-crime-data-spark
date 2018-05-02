@@ -12,7 +12,6 @@ object WordCount {
     timed("Step 2 - Saving results", persist(result, args(1)))
 
     println(timing)
-    sc.stop()
   }
 
   def countWords(contents: RDD[String]): RDD[(String, Int)] = {
