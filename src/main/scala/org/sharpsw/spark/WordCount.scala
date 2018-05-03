@@ -5,7 +5,7 @@ import org.apache.spark.sql.SparkSession
 import org.sharpsw.spark.TraceUtil.{timed, timing}
 
 object WordCount {
-  val sparkSession = SparkSession.builder.appName("WordCount").master("local[*]").getOrCreate()
+  val sparkSession: SparkSession = SparkSession.builder.appName("WordCount").master("local[*]").getOrCreate()
 
   def main(args: Array[String]): Unit = {
     val fileContents = sparkSession.sparkContext.textFile(args(0))
