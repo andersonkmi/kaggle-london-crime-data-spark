@@ -2,6 +2,7 @@ package org.sharpsw.spark
 
 import org.apache.spark.rdd.RDD
 import org.apache.spark.{SparkConf, SparkContext}
+import org.sharpsw.spark.TraceUtil.{timed, timing}
 
 object WordCount {
   val sc:SparkContext = new SparkContext(new SparkConf().setAppName("WordCount").setMaster("local[*]"))
@@ -22,14 +23,4 @@ object WordCount {
   def persist(result: RDD[(String, Int)], destinationFolder: String): Unit = {
     result.saveAsTextFile(destinationFolder)
   }
-
-  val timing = new StringBuffer
-  def timed[T](label: String, code: => T): T = {
-    val start = System.currentTimeMillis()
-    val result = code
-    val stop = System.currentTimeMillis()
-    timing.append(s"Processing $label took ${stop - start} ms.\n")
-    result
-  }
-
 }
