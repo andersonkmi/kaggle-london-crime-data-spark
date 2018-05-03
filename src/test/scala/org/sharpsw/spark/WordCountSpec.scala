@@ -17,25 +17,25 @@ class WordCountSpec extends FlatSpec with Matchers with BeforeAndAfterAll {
 
   override def afterAll(): Unit = {
     assert(initializeWordCount(), " -- did you fill in all the values in WordCount (sc)?")
-    sc.stop()
+    sparkSession.sparkContext.stop()
   }
 
 
   "The WordCount.countWords(empty)" should "return empty RDD" in {
-    val emptyRDD = sc.parallelize(List(""))
+    val emptyRDD = sparkSession.sparkContext.parallelize(List(""))
     val result = countWords(emptyRDD)
     result.isEmpty() shouldEqual false
   }
 
   "The WordCount.countWords() with single value" should "return RDD OK" in {
-    val input = sc.parallelize(List("anderson"))
+    val input = sparkSession.sparkContext.parallelize(List("anderson"))
     val result = countWords(input).collect()
     result.head._1 shouldEqual "anderson"
     result.head._2 shouldEqual 1
   }
 
   "The WordCount.countWords() with multiple values" should "return OK" in {
-    val input = sc.parallelize(List("anderson", "ito", "spark", "scala", "scala"))
+    val input = sparkSession.sparkContext.parallelize(List("anderson", "ito", "spark", "scala", "scala"))
     val result = countWords(input).collect()
     result.size shouldEqual 4
 

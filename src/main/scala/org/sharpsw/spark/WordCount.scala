@@ -1,14 +1,14 @@
 package org.sharpsw.spark
 
 import org.apache.spark.rdd.RDD
-import org.apache.spark.{SparkConf, SparkContext}
+import org.apache.spark.sql.SparkSession
 import org.sharpsw.spark.TraceUtil.{timed, timing}
 
 object WordCount {
-  val sc:SparkContext = new SparkContext(new SparkConf().setAppName("WordCount").setMaster("local[*]"))
+  val sparkSession = SparkSession.builder.appName("WordCount").master("local[*]").getOrCreate()
 
   def main(args: Array[String]): Unit = {
-    val fileContents = sc.textFile(args(0))
+    val fileContents = sparkSession.sparkContext.textFile(args(0))
     val result = timed("Step 1 - Executing the counting process", countWords(fileContents))
     timed("Step 2 - Saving results", persist(result, args(1)))
 
