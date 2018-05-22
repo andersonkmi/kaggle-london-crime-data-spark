@@ -10,3 +10,4 @@ tmp/*
 .*.sw?
 .idea/
 target/
+*.csv
