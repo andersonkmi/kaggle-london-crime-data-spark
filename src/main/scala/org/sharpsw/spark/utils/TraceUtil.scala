@@ -1,4 +1,4 @@
-package org.sharpsw.spark
+package org.sharpsw.spark.utils
 
 object TraceUtil {
   val timing = new StringBuffer

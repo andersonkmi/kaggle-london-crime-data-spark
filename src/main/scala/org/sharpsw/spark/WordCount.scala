@@ -2,7 +2,7 @@ package org.sharpsw.spark
 
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.SparkSession
-import org.sharpsw.spark.TraceUtil.{timed, timing}
+import org.sharpsw.spark.utils.TraceUtil.{timed, timing}
 
 object WordCount {
   val sparkSession: SparkSession = SparkSession.builder.appName("WordCount").master("local[*]").getOrCreate()

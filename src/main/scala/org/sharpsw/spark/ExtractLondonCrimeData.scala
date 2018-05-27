@@ -2,9 +2,9 @@ package org.sharpsw.spark
 
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.types._
-import org.apache.spark.sql.functions._
 import org.apache.spark.sql.{DataFrame, Row, SparkSession}
-import org.sharpsw.spark.TraceUtil.{timed, timing}
+import org.sharpsw.spark.utils.DataFrameUtil.{saveDataFrame, extractDistinctValues}
+import org.sharpsw.spark.utils.TraceUtil.{timed, timing}
 
 object ExtractLondonCrimeData {
   val sparkSession: SparkSession = SparkSession.builder.appName("LondonCrimeDataExercise001").master("local[*]").getOrCreate()
@@ -52,14 +52,6 @@ object ExtractLondonCrimeData {
 
   def extractCombinedCategories(contents: DataFrame): DataFrame = {
     contents.select("major_category", "minor_category").distinct.sort("major_category", "minor_category")
-  }
-
-  private def extractDistinctValues(contents: DataFrame, columnName: String): DataFrame = {
-    contents.select(contents(columnName)).distinct.orderBy(asc(columnName))
-  }
-
-  private def saveDataFrame(contents: DataFrame, fileName: String): Unit = {
-    contents.coalesce(1).write.mode("overwrite").option("header", "true").csv(fileName)
   }
 
   def row(line: List[String]): Row = {
