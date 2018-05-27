@@ -7,7 +7,7 @@ import org.sharpsw.spark.utils.DataFrameUtil.{saveDataFrame, extractDistinctValu
 import org.sharpsw.spark.utils.TraceUtil.{timed, timing}
 
 object ExtractLondonCrimeData {
-  val sparkSession: SparkSession = SparkSession.builder.appName("LondonCrimeDataExercise001").master("local[*]").getOrCreate()
+  val sparkSession: SparkSession = SparkSession.builder.appName("ExtractLondonCrimeData").master("local[*]").getOrCreate()
 
   def main(args: Array[String]): Unit = {
     val fileContents = sparkSession.sparkContext.textFile(args(0))
