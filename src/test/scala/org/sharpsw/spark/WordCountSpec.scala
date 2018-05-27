@@ -17,7 +17,7 @@ class WordCountSpec extends FlatSpec with Matchers with BeforeAndAfterAll {
 
   override def afterAll(): Unit = {
     assert(initializeWordCount(), " -- did you fill in all the values in WordCount (sc)?")
-    sparkSession.sparkContext.stop()
+    //sparkSession.sparkContext.stop()
   }
 
 
