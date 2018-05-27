@@ -26,7 +26,8 @@ class ExtractLondonCrimeDataSpec extends FlatSpec with Matchers with BeforeAndAf
   private def createDataFrame(): DataFrame = {
     val sampleData = Seq(
       Row("code001", "region 001", "major_category 001", "minor category 001/001", 1, 2001, 1),
-      Row("code001", "region 001", "major_category 001", "minor category 001/002", 3, 2001, 1)
+      Row("code001", "region 001", "major_category 001", "minor category 001/002", 3, 2001, 1),
+      Row("code002", "region 002", "major_category 001", "minor category 001/001", 3, 2001, 1)
     )
 
     val schema = schemaDefinition()
@@ -46,17 +47,32 @@ class ExtractLondonCrimeDataSpec extends FlatSpec with Matchers with BeforeAndAf
     StructType(fields)
   }
 
-  "Extracting boroughs test case 1" should "return 1" in {
+  "Extracting boroughs test case 1" should "return 2" in {
     val df = createDataFrame()
     val locations = extractDistinctBoroughs(df)
     val results = locations.collect().map(_(0)).toList
-    results.size shouldEqual 1
+    results.size shouldEqual 2
   }
 
-  "Extracting boroughs test case 2" should "equals region 001" in {
+  "Extracting boroughs test case 2" should "contain region 001 and region 002" in {
     val df = createDataFrame()
     val locations = extractDistinctBoroughs(df)
     val results = locations.collect().map(_(0)).toList
     results.head shouldEqual "region 001"
+    results(1) shouldEqual "region 002"
+  }
+
+  "Extracting major categories test case 001" should "return 1" in {
+    val df = createDataFrame()
+    val items = extractDistinctMajorCrimeCategories(df)
+    val results = items.collect().map(_(0)).toList
+    results.size shouldEqual 1
+  }
+
+  "Extracting major categories contents" should "return major_category 001" in {
+    val df = createDataFrame()
+    val items = extractDistinctMajorCrimeCategories(df)
+    val results = items.collect().map(_(0)).toList
+    results.head shouldEqual "major_category 001"
   }
 }
