@@ -5,14 +5,16 @@ import org.apache.spark.sql.types._
 import org.apache.spark.sql.{DataFrame, Row, SparkSession}
 import org.sharpsw.spark.TraceUtil.{timed, timing}
 
-object LondonCrimeDataExercise001 {
+object ExtractLondonCrimeData {
   val sparkSession: SparkSession = SparkSession.builder.appName("LondonCrimeDataExercise001").master("local[*]").getOrCreate()
 
   def main(args: Array[String]): Unit = {
     val fileContents = sparkSession.sparkContext.textFile(args(0))
     val (headerColumns, contents) = timed("Step 1 - reading contents", readContents(fileContents))
     headerColumns.foreach(println)
-    contents.take(10).foreach(println)
+    contents.printSchema()
+    timed("Saving boroughs to csv", extractDistinctBoroughs(contents))
+    timed("Saving major categories to csv", extractDistinctMajorCrimeCategories(contents))
     println(timing)
   }
 
@@ -25,9 +27,19 @@ object LondonCrimeDataExercise001 {
     (headerColumns, dataFrame)
   }
 
+  def extractDistinctBoroughs(contents: DataFrame): Unit = {
+    val distinctBoroughs = contents.select(contents("borough")).distinct
+    distinctBoroughs.coalesce(1).write.mode("overwrite").option("header", "true").csv("boroughs.csv")
+  }
+
+  def extractDistinctMajorCrimeCategories(contents: DataFrame): Unit = {
+    val distinctMajorCategories = contents.select(contents("major_category")).distinct
+    distinctMajorCategories.coalesce(1).write.mode("overwrite").option("header", "true").csv("major_categories.csv")
+  }
+
   def row(line: List[String]): Row = {
     //val list = line.head::line.tail.map(_.toDouble)
-    val list = List(line(0), line(1), line(2), line(3), line(4).toInt, line(5).toInt, line(6).toInt)
+    val list = List(line.head, line(1), line(2), line(3), line(4).toInt, line(5).toInt, line(6).toInt)
     Row.fromSeq(list)
   }
 
