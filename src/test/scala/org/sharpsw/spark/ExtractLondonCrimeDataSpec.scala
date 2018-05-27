@@ -4,6 +4,7 @@ import org.apache.spark.sql.types.{IntegerType, StringType, StructField, StructT
 import org.apache.spark.sql.{DataFrame, Row}
 import org.scalatest.{BeforeAndAfterAll, FlatSpec, Matchers}
 import ExtractLondonCrimeData._
+import ExtractLondonCrimeData.sparkSession.implicits._
 
 class ExtractLondonCrimeDataSpec extends FlatSpec with Matchers with BeforeAndAfterAll {
   def initializeExtractLondonCrimeData(): Boolean =
@@ -74,5 +75,38 @@ class ExtractLondonCrimeDataSpec extends FlatSpec with Matchers with BeforeAndAf
     val items = extractDistinctMajorCrimeCategories(df)
     val results = items.collect().map(_(0)).toList
     results.head shouldEqual "major_category 001"
+  }
+
+  "Extracting minor categories count" should "return 2" in {
+    val df = createDataFrame()
+    val items = extractDistinctMinorCrimeCategories(df)
+    val results = items.collect().map(_(0)).toList
+    results.size shouldEqual 2
+  }
+
+  "Extracting minor categories contents" should "contain minor category 001/001 and minor category 001/002" in {
+    val df = createDataFrame()
+    val items = extractDistinctMinorCrimeCategories(df)
+    val results = items.collect().map(_(0)).toList
+    results.head shouldEqual "minor category 001/001"
+    results(1) shouldEqual "minor category 001/002"
+  }
+
+  "Extracting combined categories count" should "return 2" in {
+    val df = createDataFrame()
+    val items = extractCombinedCategories(df)
+    items.count() shouldEqual 2
+  }
+
+  "Extracting combined categories contents" should "contain major_category 001,minor category 001/001 and major_category 001,minor category 001/002" in {
+    val df = createDataFrame()
+    val items = extractCombinedCategories(df)
+    val results = items.map(item => (item.getString(0), item.getString(1))).collect().toList
+
+    results.head._1 shouldEqual "major_category 001"
+    results.head._2 shouldEqual "minor category 001/001"
+
+    results(1)._1 shouldEqual "major_category 001"
+    results(1)._2 shouldEqual "minor category 001/002"
   }
 }
