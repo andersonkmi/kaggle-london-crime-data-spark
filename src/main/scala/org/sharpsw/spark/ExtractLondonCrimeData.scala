@@ -63,14 +63,11 @@ object ExtractLondonCrimeData {
   }
 
   def row(line: List[String]): Row = {
-    //val list = line.head::line.tail.map(_.toDouble)
     val list = List(line.head, line(1), line(2), line(3), line(4).toInt, line(5).toInt, line(6).toInt)
     Row.fromSeq(list)
   }
 
   def dfSchema(columnNames: List[String]): StructType = {
-    //val firstField = StructField(columnNames.head, StringType, nullable = false)
-    //val fields = columnNames.map(field => StructField(field, StringType, nullable = false))
     val lsoaCodeField       = StructField(columnNames.head, StringType, nullable = false)
     val boroughField        = StructField(columnNames(1), StringType, nullable = false)
     val majorCategoryField  = StructField(columnNames(2), StringType, nullable = false)
