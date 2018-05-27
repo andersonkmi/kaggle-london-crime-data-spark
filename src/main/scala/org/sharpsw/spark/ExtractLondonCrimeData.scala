@@ -2,6 +2,7 @@ package org.sharpsw.spark
 
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.types._
+import org.apache.spark.sql.functions._
 import org.apache.spark.sql.{DataFrame, Row, SparkSession}
 import org.sharpsw.spark.TraceUtil.{timed, timing}
 
@@ -17,6 +18,7 @@ object ExtractLondonCrimeData {
     timed("Saving boroughs to csv", extractDistinctBoroughs(contents))
     timed("Saving major categories to csv", extractDistinctMajorCrimeCategories(contents))
     timed("Saving minor categories to csv", extractDistinctMinorCrimeCategories(contents))
+    timed("Saving categories to csv", extractCombinedCategories(contents))
     println(timing)
   }
 
@@ -42,8 +44,13 @@ object ExtractLondonCrimeData {
     extractDistinctValues(contents, "minor_category")
   }
 
+  def extractCombinedCategories(contents: DataFrame): Unit = {
+    val distinctValues = contents.select("major_category", "minor_category").distinct.sort("major_category", "minor_category")
+    distinctValues.coalesce(1).write.mode("overwrite").option("header", "true").csv("categories.csv")
+  }
+
   private def extractDistinctValues(contents: DataFrame, columnName: String): Unit = {
-    val distinctValues = contents.select(contents(columnName)).distinct
+    val distinctValues = contents.select(contents(columnName)).distinct.orderBy(asc(columnName))
     distinctValues.coalesce(1).write.mode("overwrite").option("header", "true").csv(s"${columnName}.csv")
   }
 
