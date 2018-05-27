@@ -11,10 +11,12 @@ object ExtractLondonCrimeData {
   def main(args: Array[String]): Unit = {
     val fileContents = sparkSession.sparkContext.textFile(args(0))
     val (headerColumns, contents) = timed("Step 1 - reading contents", readContents(fileContents))
+    contents.persist()
     headerColumns.foreach(println)
     contents.printSchema()
     timed("Saving boroughs to csv", extractDistinctBoroughs(contents))
     timed("Saving major categories to csv", extractDistinctMajorCrimeCategories(contents))
+    timed("Saving minor categories to csv", extractDistinctMinorCrimeCategories(contents))
     println(timing)
   }
 
@@ -24,17 +26,25 @@ object ExtractLondonCrimeData {
 
     val data = contents.mapPartitionsWithIndex((i, it) => if (i == 0) it.drop(1) else it).map(_.split(",").toList).map(row)
     val dataFrame = sparkSession.createDataFrame(data, schema)
+    //dataFrame.persist
     (headerColumns, dataFrame)
   }
 
   def extractDistinctBoroughs(contents: DataFrame): Unit = {
-    val distinctBoroughs = contents.select(contents("borough")).distinct
-    distinctBoroughs.coalesce(1).write.mode("overwrite").option("header", "true").csv("boroughs.csv")
+    extractDistinctValues(contents, "borough")
   }
 
   def extractDistinctMajorCrimeCategories(contents: DataFrame): Unit = {
-    val distinctMajorCategories = contents.select(contents("major_category")).distinct
-    distinctMajorCategories.coalesce(1).write.mode("overwrite").option("header", "true").csv("major_categories.csv")
+    extractDistinctValues(contents, "major_category")
+  }
+
+  def extractDistinctMinorCrimeCategories(contents: DataFrame): Unit = {
+    extractDistinctValues(contents, "minor_category")
+  }
+
+  private def extractDistinctValues(contents: DataFrame, columnName: String): Unit = {
+    val distinctValues = contents.select(contents(columnName)).distinct
+    distinctValues.coalesce(1).write.mode("overwrite").option("header", "true").csv(s"${columnName}.csv")
   }
 
   def row(line: List[String]): Row = {
