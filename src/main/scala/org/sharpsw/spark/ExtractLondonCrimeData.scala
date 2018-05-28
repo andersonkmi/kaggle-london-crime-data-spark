@@ -62,12 +62,10 @@ object ExtractLondonCrimeData {
   }
 
   def calculateTotalCrimeCountByBorough(contents: DataFrame): DataFrame = {
-    val filteredDataFrame = contents.select(contents("borough"), contents("value"))
-    filteredDataFrame.groupBy(filteredDataFrame("borough")).agg(sum(filteredDataFrame("value")).alias("total_crimes")).sort(desc("total_crimes"))
+    contents.groupBy(contents("borough")).agg(sum(contents("value")).alias("total_crimes")).sort(desc("total_crimes"))
   }
 
   def calculateCrimesByMajorCategory(contents: DataFrame): DataFrame = {
-    //val filteredDataFrame = contents.select(contents("major_category"), contents("value"))
     contents.groupBy(contents("major_category")).agg(sum(contents("value")).alias("total")).sort(desc("total"))
   }
 
