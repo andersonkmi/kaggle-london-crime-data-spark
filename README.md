@@ -24,6 +24,18 @@ $ sbt
 $ run london_crime_by_lsoa.csv
 ```
 
+At the end, the following folders are created inside the project:
+
+* _borough.csv_
+* _categories.csv_
+* _major_category.csv_
+* _minor_category.csv_
+* _total_crimes_by_borough.csv_
+* _total_crimes_by_major_category.csv_
+* _total_crimes_by_minor_category.csv_
+
+each containing the results of each filter applied to the original data set.
+
 ## 2. References
 
 [London crime data, 2008-2016 (Kaggle) - last used in May 2018](https://www.kaggle.com/jboysen/london-crime/data)
