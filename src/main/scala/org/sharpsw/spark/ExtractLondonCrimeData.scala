@@ -27,8 +27,11 @@ object ExtractLondonCrimeData {
     val categories = timed("Extracting categories to csv", extractCombinedCategories(contents))
     timed("Exporting categories to csv", saveDataFrame(categories, "categories.csv"))
 
-    val crimesByBorough = timed("Calculate total crime by borough", calculateTotalCrimeCountByBorough(contents))
+    val crimesByBorough = timed("Calculate total crimes by borough", calculateTotalCrimeCountByBorough(contents))
     timed("Exporting resulting aggregation", saveDataFrame(crimesByBorough, "total_crimes_by_borough.csv"))
+
+    val crimesByMajorCategory = timed("Calculate total crimes by major category", calculateCrimesByMajorCategory(contents))
+    timed("Exporting resulting aggregation - by major category", saveDataFrame(crimesByMajorCategory, "total_crimes_by_major_category.csv"))
 
     println(timing)
   }
@@ -61,6 +64,11 @@ object ExtractLondonCrimeData {
   def calculateTotalCrimeCountByBorough(contents: DataFrame): DataFrame = {
     val filteredDataFrame = contents.select(contents("borough"), contents("value"))
     filteredDataFrame.groupBy(filteredDataFrame("borough")).agg(sum(filteredDataFrame("value")).alias("total_crimes")).sort(desc("total_crimes"))
+  }
+
+  def calculateCrimesByMajorCategory(contents: DataFrame): DataFrame = {
+    //val filteredDataFrame = contents.select(contents("major_category"), contents("value"))
+    contents.groupBy(contents("major_category")).agg(sum(contents("value")).alias("total")).sort(desc("total"))
   }
 
   def row(line: List[String]): Row = {
