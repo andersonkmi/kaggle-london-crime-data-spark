@@ -14,6 +14,7 @@ extracts and saves the following information:
 * Distinct minor categories crimes
 * Total number of crimes by borough in descending order
 * Total number of crimes by major category in descending order
+* Total number of crimes by borough and year
 
 In order to run it, the CSV file download from the Kaggle website must be located in the
 root folder of the project and executed as follows:
@@ -33,6 +34,7 @@ At the end, the following folders are created inside the project:
 * _total_crimes_by_borough.csv_
 * _total_crimes_by_major_category.csv_
 * _total_crimes_by_minor_category.csv_
+* _total_crimes_by_borough_year.csv_
 
 each containing the results of each filter applied to the original data set.
 
