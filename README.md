@@ -36,6 +36,18 @@ At the end, the following folders are created inside the project:
 
 each containing the results of each filter applied to the original data set.
 
-## 2. References
+## 2. Unit tests
+
+In order to run unit tests inside the project, the following command can be executed:
+
+```
+$ sbt
+...
+$ test
+```
+
+Wait for the unit tests finish the execution to see the results.
+
+## 3. References
 
 [London crime data, 2008-2016 (Kaggle) - last used in May 2018](https://www.kaggle.com/jboysen/london-crime/data)
