@@ -2,6 +2,7 @@ package org.sharpsw.spark
 
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.types._
+import org.apache.spark.sql.functions._
 import org.apache.spark.sql.{DataFrame, Row, SparkSession}
 import org.sharpsw.spark.utils.DataFrameUtil.{saveDataFrame, extractDistinctValues}
 import org.sharpsw.spark.utils.TraceUtil.{timed, timing}
@@ -25,6 +26,9 @@ object ExtractLondonCrimeData {
 
     val categories = timed("Extracting categories to csv", extractCombinedCategories(contents))
     timed("Exporting categories to csv", saveDataFrame(categories, "categories.csv"))
+
+    val crimesByBorough = timed("Calculate total crime by borough", calculateTotalCrimeCountByBorough(contents))
+    timed("Exporting resulting aggregation", saveDataFrame(crimesByBorough, "total_crimes_by_borough.csv"))
 
     println(timing)
   }
@@ -52,6 +56,11 @@ object ExtractLondonCrimeData {
 
   def extractCombinedCategories(contents: DataFrame): DataFrame = {
     contents.select("major_category", "minor_category").distinct.sort("major_category", "minor_category")
+  }
+
+  def calculateTotalCrimeCountByBorough(contents: DataFrame): DataFrame = {
+    val filteredDataFrame = contents.select(contents("borough"), contents("value"))
+    filteredDataFrame.groupBy(filteredDataFrame("borough")).agg(sum(filteredDataFrame("value")).alias("total_crimes")).sort(desc("total_crimes"))
   }
 
   def row(line: List[String]): Row = {
