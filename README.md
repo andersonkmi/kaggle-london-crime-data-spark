@@ -18,6 +18,7 @@ extracts and saves the following information:
 * Total number of crimes by major category and year
 * Total number of crimes by minor category and year
 * Total number of crimes by year
+* Total number of crimes by year and month
 
 In order to run it, the CSV file download from the Kaggle website must be located in the
 root folder of the project and executed as follows:
@@ -41,6 +42,7 @@ At the end, the following folders are created inside the project:
 * _total_crimes_by_major_category_year.csv_
 * _total_crimes_by_minor_category_year.csv_
 * _total_crimes_by_year.csv_
+* _total_crimes_by_year_month.csv_
 
 each containing the results of each filter applied to the original data set.
 

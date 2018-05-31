@@ -4,7 +4,7 @@ organization := "org.sharpsw.spark"
 
 name := "data-handling-spark"
 
-val appVersion = "1.0.0"
+val appVersion = "1.0.4"
 
 val appName = "data-handling-spark"
 
