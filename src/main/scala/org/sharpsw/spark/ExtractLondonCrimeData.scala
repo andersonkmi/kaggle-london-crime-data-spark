@@ -1,6 +1,6 @@
 package org.sharpsw.spark
 
-import org.apache.log4j.Logger
+import org.apache.log4j.{Level, Logger}
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.types._
 import org.apache.spark.sql.functions._
@@ -15,9 +15,13 @@ object ExtractLondonCrimeData {
     @transient lazy val logger = Logger.getLogger(getClass.getName)
     logger.info("Starting Extract London Crime data information")
 
+    Logger.getLogger("org").setLevel(Level.OFF)
+
+    logger.info(s"Reading ${args(0)} contents")
     val fileContents = sparkSession.sparkContext.textFile(args(0))
     val (headerColumns, contents) = timed("Step 1 - reading contents", readContents(fileContents))
     contents.persist()
+
     headerColumns.foreach(println)
     val boroughs = timed("Extracting distinct boroughs", extractDistinctBoroughs(contents))
     timed("Exporting boroughs to csv", saveDataFrame(boroughs, "borough.csv"))
@@ -48,6 +52,9 @@ object ExtractLondonCrimeData {
 
     val crimesByMinorCategoryAndYear = timed("Calculate total crimes by minor category and year", calculateCrimesByMinorCategoryAndYear(contents))
     timed("Exporting resulting aggregation - by minor category and year", saveDataFrame(crimesByMinorCategoryAndYear, "total_crimes_by_minor_category_year.csv"))
+
+    val crimesByYear = timed("Calculate total crimes by year", calculateCrimesByYear(contents))
+    timed("Exporting crimes by year results", saveDataFrame(crimesByYear, "total_crimes_by_year.csv"))
 
     println(timing)
 
@@ -101,6 +108,10 @@ object ExtractLondonCrimeData {
 
   def calculateCrimesByMinorCategoryAndYear(contents: DataFrame): DataFrame = {
     contents.groupBy(contents("major_category"), contents("minor_category"), contents("year")).agg(sum(contents("value")).alias("total")).sort(desc("year"), desc("total"))
+  }
+
+  def calculateCrimesByYear(contents: DataFrame): DataFrame = {
+    contents.groupBy(contents("year")).agg(sum(contents("value"))).sort(desc("year"))
   }
 
   def row(line: List[String]): Row = {
