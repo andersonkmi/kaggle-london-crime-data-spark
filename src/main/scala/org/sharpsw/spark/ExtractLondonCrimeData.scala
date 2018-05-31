@@ -1,16 +1,20 @@
 package org.sharpsw.spark
 
+import org.apache.log4j.Logger
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.types._
 import org.apache.spark.sql.functions._
 import org.apache.spark.sql.{DataFrame, Row, SparkSession}
-import org.sharpsw.spark.utils.DataFrameUtil.{saveDataFrame, extractDistinctValues}
+import org.sharpsw.spark.utils.DataFrameUtil.{extractDistinctValues, saveDataFrame}
 import org.sharpsw.spark.utils.TraceUtil.{timed, timing}
 
 object ExtractLondonCrimeData {
   val sparkSession: SparkSession = SparkSession.builder.appName("ExtractLondonCrimeData").master("local[*]").getOrCreate()
 
   def main(args: Array[String]): Unit = {
+    @transient lazy val logger = Logger.getLogger(getClass.getName)
+    logger.info("Starting Extract London Crime data information")
+
     val fileContents = sparkSession.sparkContext.textFile(args(0))
     val (headerColumns, contents) = timed("Step 1 - reading contents", readContents(fileContents))
     contents.persist()
@@ -46,6 +50,8 @@ object ExtractLondonCrimeData {
     timed("Exporting resulting aggregation - by minor category and year", saveDataFrame(crimesByMinorCategoryAndYear, "total_crimes_by_minor_category_year.csv"))
 
     println(timing)
+
+    logger.info("Exiting Extract London Crime data information")
   }
 
   def readContents(contents: RDD[String]): (List[String], DataFrame) = {
