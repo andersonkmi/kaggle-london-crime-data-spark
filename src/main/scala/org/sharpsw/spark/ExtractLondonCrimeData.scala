@@ -69,6 +69,10 @@ object ExtractLondonCrimeData {
     val crimesByYear = timed("Calculate total crimes by year", calculateCrimesByYear(contents))
     timed("Exporting crimes by year results", saveDataFrame(crimesByYear, "total_crimes_by_year.csv"))
 
+    logger.info("Calculating total crimes by year and month")
+    val crimesByYearMonth = timed("Calculate total crimes by year", calculateCrimesByYearAndMonth(contents))
+    timed("Exporting crimes by year and month results", saveDataFrame(crimesByYearMonth, "total_crimes_by_year_month.csv"))
+
     println(timing)
 
     logger.info("Exiting Extract London Crime data information")
@@ -125,6 +129,10 @@ object ExtractLondonCrimeData {
 
   def calculateCrimesByYear(contents: DataFrame): DataFrame = {
     contents.groupBy(contents("year")).agg(sum(contents("value")).alias("total")).sort(desc("year"))
+  }
+
+  def calculateCrimesByYearAndMonth(contents: DataFrame): DataFrame = {
+    contents.groupBy(contents("year"), contents("month")).agg(sum(contents("value")).alias("total")).sort(desc("year"), desc("month"))
   }
 
   def row(line: List[String]): Row = {
