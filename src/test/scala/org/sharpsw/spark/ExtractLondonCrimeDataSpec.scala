@@ -157,4 +157,16 @@ class ExtractLondonCrimeDataSpec extends FlatSpec with Matchers with BeforeAndAf
     results(1)._2 shouldEqual 2001
     results(1)._3 shouldEqual 3
   }
+
+  "Counting total crimes by major category and year" should "be OK" in {
+    val df = createDataFrame()
+    val items = calculateCrimesByMajorCategoryAndYear(df)
+    val results = items.map(item => (item.getString(0), item.getInt(1), item.getLong(2))).collect().toList
+
+    results.size shouldEqual 1
+
+    results.head._1 shouldEqual "major_category 001"
+    results.head._2 shouldEqual 2001
+    results.head._3 shouldEqual 7
+  }
 }
