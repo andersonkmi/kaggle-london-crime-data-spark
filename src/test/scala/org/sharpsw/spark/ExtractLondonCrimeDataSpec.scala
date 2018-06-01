@@ -20,7 +20,7 @@ class ExtractLondonCrimeDataSpec extends FlatSpec with Matchers with BeforeAndAf
 
   override def afterAll(): Unit = {
     assert(initializeExtractLondonCrimeData(), " -- did you fill in all the values in WordCount (sc)?")
-    //sparkSession.sparkContext.stop()
+    sparkSession.sparkContext.stop()
   }
 
 
