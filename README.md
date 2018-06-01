@@ -1,7 +1,7 @@
-# Data handling in Spark
-Exercises using some Kaggle datasets developed in Spark and Scala.
+# London crime data exploration n Spark
+Data exploration using some Kaggle datasets developed in Spark and Scala.
 
-## 1. Programs
+## 1.Introduction
 
 Here are some of the programs developed so far inside this project.
 
