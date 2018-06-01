@@ -187,4 +187,27 @@ class ExtractLondonCrimeDataSpec extends FlatSpec with Matchers with BeforeAndAf
     results(1)._3 shouldEqual 2001
     results(1)._4 shouldEqual 3
   }
+
+  "Counting total crimes by year" should "be OK" in {
+    val df = createDataFrame()
+    val items = calculateCrimesByYear(df)
+    val results = items.map(item => (item.getInt(0), item.getLong(1))).collect().toList
+
+    results.size shouldEqual 1
+
+    results.head._1 shouldEqual 2001
+    results.head._2 shouldEqual 7
+  }
+
+  "Counting total crimes by year and month" should "be OK" in {
+    val df = createDataFrame()
+    val items = calculateCrimesByYearAndMonth(df)
+    val results = items.map(item => (item.getInt(0), item.getInt(1), item.getLong(2))).collect().toList
+
+    results.size shouldEqual 1
+
+    results.head._1 shouldEqual 2001
+    results.head._2 shouldEqual 1
+    results.head._3 shouldEqual 7
+  }
 }
