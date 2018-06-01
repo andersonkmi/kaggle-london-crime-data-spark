@@ -109,4 +109,13 @@ class ExtractLondonCrimeDataSpec extends FlatSpec with Matchers with BeforeAndAf
     results(1)._1 shouldEqual "major_category 001"
     results(1)._2 shouldEqual "minor category 001/002"
   }
+
+  "Counting total crimes by borough" should "return major_category 001 / 7" in {
+    val df = createDataFrame()
+    val items = calculateTotalCrimeCountByBorough(df)
+    val results = items.map(item => (item.getString(0), item.getLong(1))).collect().toList
+
+    results.head._1 shouldEqual "region 001"
+    results.head._2 shouldEqual 4
+  }
 }
