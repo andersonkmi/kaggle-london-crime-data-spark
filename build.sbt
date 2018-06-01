@@ -2,11 +2,11 @@ import Dependencies._
 
 organization := "org.sharpsw.spark"
 
-name := "data-handling-spark"
+name := "kaggle-london-crime-data-spark"
 
 val appVersion = "1.0.6.0"
 
-val appName = "data-handling-spark"
+val appName = "kaggle-london-crime-data-spark"
 
 version := appVersion
 
