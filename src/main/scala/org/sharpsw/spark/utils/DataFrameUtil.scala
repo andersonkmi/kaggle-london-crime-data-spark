@@ -13,7 +13,7 @@ object DataFrameUtil {
   }
 
   def saveDataFrameToParquet(df: DataFrame, fileName: String): Unit = {
-    df.write.mode("overwrite").parquet(fileName)
+    df.coalesce(1).write.mode("overwrite").parquet(fileName)
   }
 
 }
