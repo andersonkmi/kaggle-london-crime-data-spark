@@ -1,11 +1,8 @@
-# London crime data exploration n Spark
+# London crime data exploration in Spark
 Data exploration using some Kaggle datasets developed in Spark and Scala.
 
-## 1.Introduction
+## 1. Extracted information from the initial data set
 
-Here are some of the programs developed so far inside this project.
-
-### 1.1. Extract London Crime data
 Initial program to filter distinct values from the London crime data set. This program currently
 extracts and saves the following information:
 

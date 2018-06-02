@@ -8,8 +8,12 @@ object DataFrameUtil {
     contents.select(contents(columnName)).distinct.orderBy(asc(columnName))
   }
 
-  def saveDataFrame(contents: DataFrame, fileName: String): Unit = {
+  def saveDataFrameToCsv(contents: DataFrame, fileName: String): Unit = {
     contents.coalesce(1).write.mode("overwrite").option("header", "true").csv(fileName)
+  }
+
+  def saveDataFrameToParquet(df: DataFrame, fileName: String): Unit = {
+
   }
 
 }

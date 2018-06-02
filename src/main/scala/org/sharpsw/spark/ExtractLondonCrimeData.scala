@@ -7,7 +7,7 @@ import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.types._
 import org.apache.spark.sql.functions._
 import org.apache.spark.sql.{DataFrame, Row, SparkSession}
-import org.sharpsw.spark.utils.DataFrameUtil.{extractDistinctValues, saveDataFrame}
+import org.sharpsw.spark.utils.DataFrameUtil.{extractDistinctValues, saveDataFrameToCsv}
 import org.sharpsw.spark.utils.TraceUtil.{timed, timing}
 
 object ExtractLondonCrimeData {
@@ -31,51 +31,51 @@ object ExtractLondonCrimeData {
 
       logger.info("Extracting distinct boroughs")
       val boroughs = timed("Extracting distinct boroughs", extractDistinctBoroughs(contents))
-      timed("Exporting boroughs to csv", saveDataFrame(boroughs, "borough.csv"))
+      timed("Exporting boroughs to csv", saveDataFrameToCsv(boroughs, "borough.csv"))
 
       logger.info("Extracting distinct major crime categories")
       val majorCrimeCategories = timed("Extracting major categories", extractDistinctMajorCrimeCategories(contents))
-      timed("Exporting major categories to csv", saveDataFrame(majorCrimeCategories, "major_category.csv"))
+      timed("Exporting major categories to csv", saveDataFrameToCsv(majorCrimeCategories, "major_category.csv"))
 
       logger.info("Extracting distinct minor crime categories")
       val minorCrimeCategories = timed("Extracting minor categories", extractDistinctMinorCrimeCategories(contents))
-      timed("Exporting minor category to csv", saveDataFrame(minorCrimeCategories, "minor_category.csv"))
+      timed("Exporting minor category to csv", saveDataFrameToCsv(minorCrimeCategories, "minor_category.csv"))
 
       logger.info("Extracting distinct combined crime categories")
       val categories = timed("Extracting categories to csv", extractCombinedCategories(contents))
-      timed("Exporting categories to csv", saveDataFrame(categories, "categories.csv"))
+      timed("Exporting categories to csv", saveDataFrameToCsv(categories, "categories.csv"))
 
       logger.info("Calculating total crimes by borough")
       val crimesByBorough = timed("Calculate total crimes by borough", calculateTotalCrimeCountByBorough(contents))
-      timed("Exporting resulting aggregation", saveDataFrame(crimesByBorough, "total_crimes_by_borough.csv"))
+      timed("Exporting resulting aggregation", saveDataFrameToCsv(crimesByBorough, "total_crimes_by_borough.csv"))
 
       logger.info("Calculating total crimes by major category")
       val crimesByMajorCategory = timed("Calculate total crimes by major category", calculateCrimesByMajorCategory(contents))
-      timed("Exporting resulting aggregation - by major category", saveDataFrame(crimesByMajorCategory, "total_crimes_by_major_category.csv"))
+      timed("Exporting resulting aggregation - by major category", saveDataFrameToCsv(crimesByMajorCategory, "total_crimes_by_major_category.csv"))
 
       logger.info("Calculating total crimes by minor category")
       val crimesByMinorCategory = timed("Calculate total crimes by minor category", calculateCrimeCountByMinorCategory(contents))
-      timed("Exporting resulting aggregation - by minor category", saveDataFrame(crimesByMinorCategory, "total_crimes_by_minor_category.csv"))
+      timed("Exporting resulting aggregation - by minor category", saveDataFrameToCsv(crimesByMinorCategory, "total_crimes_by_minor_category.csv"))
 
       logger.info("Calculating total crimes by borough and year")
       val crimesByBoroughAndYear = timed("Calculate total crimes by borough and year", calculateCrimeCountByBoroughAndYear(contents))
-      timed("Exporting resulting aggregation - by borough and year", saveDataFrame(crimesByBoroughAndYear, "total_crimes_by_borough_year.csv"))
+      timed("Exporting resulting aggregation - by borough and year", saveDataFrameToCsv(crimesByBoroughAndYear, "total_crimes_by_borough_year.csv"))
 
       logger.info("Calculating total crimes by major category and year")
       val crimesByMajorCategoryAndYear = timed("Calculate total crimes by major category and year", calculateCrimesByMajorCategoryAndYear(contents))
-      timed("Exporting resulting aggregation - by major category and year", saveDataFrame(crimesByMajorCategoryAndYear, "total_crimes_by_major_category_year.csv"))
+      timed("Exporting resulting aggregation - by major category and year", saveDataFrameToCsv(crimesByMajorCategoryAndYear, "total_crimes_by_major_category_year.csv"))
 
       logger.info("Calculating total crimes by minor category and year")
       val crimesByMinorCategoryAndYear = timed("Calculate total crimes by minor category and year", calculateCrimesByMinorCategoryAndYear(contents))
-      timed("Exporting resulting aggregation - by minor category and year", saveDataFrame(crimesByMinorCategoryAndYear, "total_crimes_by_minor_category_year.csv"))
+      timed("Exporting resulting aggregation - by minor category and year", saveDataFrameToCsv(crimesByMinorCategoryAndYear, "total_crimes_by_minor_category_year.csv"))
 
       logger.info("Calculating total crimes by year")
       val crimesByYear = timed("Calculate total crimes by year", calculateCrimesByYear(contents))
-      timed("Exporting crimes by year results", saveDataFrame(crimesByYear, "total_crimes_by_year.csv"))
+      timed("Exporting crimes by year results", saveDataFrameToCsv(crimesByYear, "total_crimes_by_year.csv"))
 
       logger.info("Calculating total crimes by year and month")
       val crimesByYearMonth = timed("Calculate total crimes by year", calculateCrimesByYearAndMonth(contents))
-      timed("Exporting crimes by year and month results", saveDataFrame(crimesByYearMonth, "total_crimes_by_year_month.csv"))
+      timed("Exporting crimes by year and month results", saveDataFrameToCsv(crimesByYearMonth, "total_crimes_by_year_month.csv"))
 
       println(timing)
 
