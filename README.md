@@ -41,6 +41,20 @@ At the end, the following folders are created inside the project:
 * _total_crimes_by_year.csv_
 * _total_crimes_by_year_month.csv_
 
+The following folders are also created containing the parquet files:
+* _borough.parquet_
+* _categories.parquet_
+* _major_category.parquet_
+* _minor_category.parquet_
+* _total_crimes_by_borough.parquet_
+* _total_crimes_by_major_category.parquet_
+* _total_crimes_by_minor_category.parquet_
+* _total_crimes_by_borough_year.parquet_
+* _total_crimes_by_major_category_year.parquet_
+* _total_crimes_by_minor_category_year.parquet_
+* _total_crimes_by_year.parquet_
+* _total_crimes_by_year_month.parquet_
+
 each containing the results of each filter applied to the original data set.
 
 ## 2. Unit tests
