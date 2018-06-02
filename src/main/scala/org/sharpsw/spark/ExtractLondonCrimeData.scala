@@ -7,7 +7,7 @@ import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.types._
 import org.apache.spark.sql.functions._
 import org.apache.spark.sql.{DataFrame, Row, SparkSession}
-import org.sharpsw.spark.utils.DataFrameUtil.{extractDistinctValues, saveDataFrame}
+import org.sharpsw.spark.utils.DataFrameUtil.{extractDistinctValues, saveDataFrameToCsv, saveDataFrameToParquet}
 import org.sharpsw.spark.utils.TraceUtil.{timed, timing}
 
 object ExtractLondonCrimeData {
@@ -17,65 +17,77 @@ object ExtractLondonCrimeData {
     @transient lazy val logger = Logger.getLogger(getClass.getName)
     logger.info("Starting Extract London Crime data information")
 
-    val defaultFS = FileSystems.getDefault()
+    val defaultFS = FileSystems.getDefault
     if(Files.exists(defaultFS.getPath(args(0)))) {
       Logger.getLogger("org.apache").setLevel(Level.OFF)
 
       logger.info(s"Reading ${args(0)} contents")
       val fileContents = sparkSession.sparkContext.textFile(args(0))
       val (headerColumns, contents) = timed("Step 1 - reading contents", readContents(fileContents, sparkSession))
-      contents.persist()
+      contents.cache()
 
       logger.info("Printing data set schema information:")
       headerColumns.foreach(println)
 
       logger.info("Extracting distinct boroughs")
       val boroughs = timed("Extracting distinct boroughs", extractDistinctBoroughs(contents))
-      timed("Exporting boroughs to csv", saveDataFrame(boroughs, "borough.csv"))
+      timed("Exporting boroughs to csv", saveDataFrameToCsv(boroughs, "borough.csv"))
+      timed("Exporting the boroughs data frame to parquet", saveDataFrameToParquet(boroughs, "borough.parquet"))
 
       logger.info("Extracting distinct major crime categories")
       val majorCrimeCategories = timed("Extracting major categories", extractDistinctMajorCrimeCategories(contents))
-      timed("Exporting major categories to csv", saveDataFrame(majorCrimeCategories, "major_category.csv"))
+      timed("Exporting major categories to csv", saveDataFrameToCsv(majorCrimeCategories, "major_category.csv"))
+      timed("Exporting major categories to parquet", saveDataFrameToParquet(majorCrimeCategories, "major_category.parquet"))
 
       logger.info("Extracting distinct minor crime categories")
       val minorCrimeCategories = timed("Extracting minor categories", extractDistinctMinorCrimeCategories(contents))
-      timed("Exporting minor category to csv", saveDataFrame(minorCrimeCategories, "minor_category.csv"))
+      timed("Exporting minor category to csv", saveDataFrameToCsv(minorCrimeCategories, "minor_category.csv"))
+      timed("Exporting minor category to parquet", saveDataFrameToParquet(minorCrimeCategories, "minor_category.parquet"))
 
       logger.info("Extracting distinct combined crime categories")
       val categories = timed("Extracting categories to csv", extractCombinedCategories(contents))
-      timed("Exporting categories to csv", saveDataFrame(categories, "categories.csv"))
+      timed("Exporting categories to csv", saveDataFrameToCsv(categories, "categories.csv"))
+      timed("Exporting categories to parquet", saveDataFrameToParquet(categories, "categories.parquet"))
 
       logger.info("Calculating total crimes by borough")
       val crimesByBorough = timed("Calculate total crimes by borough", calculateTotalCrimeCountByBorough(contents))
-      timed("Exporting resulting aggregation", saveDataFrame(crimesByBorough, "total_crimes_by_borough.csv"))
+      timed("Exporting resulting aggregation to CSV", saveDataFrameToCsv(crimesByBorough, "total_crimes_by_borough.csv"))
+      timed("Exporting resulting aggregation to parquet", saveDataFrameToParquet(crimesByBorough, "total_crimes_by_borough.parquet"))
 
       logger.info("Calculating total crimes by major category")
       val crimesByMajorCategory = timed("Calculate total crimes by major category", calculateCrimesByMajorCategory(contents))
-      timed("Exporting resulting aggregation - by major category", saveDataFrame(crimesByMajorCategory, "total_crimes_by_major_category.csv"))
+      timed("Exporting resulting aggregation - by major category", saveDataFrameToCsv(crimesByMajorCategory, "total_crimes_by_major_category.csv"))
+      timed("Exporting resulting aggregation - by major category", saveDataFrameToParquet(crimesByMajorCategory, "total_crimes_by_major_category.parquet"))
 
       logger.info("Calculating total crimes by minor category")
       val crimesByMinorCategory = timed("Calculate total crimes by minor category", calculateCrimeCountByMinorCategory(contents))
-      timed("Exporting resulting aggregation - by minor category", saveDataFrame(crimesByMinorCategory, "total_crimes_by_minor_category.csv"))
+      timed("Exporting resulting aggregation - by minor category", saveDataFrameToCsv(crimesByMinorCategory, "total_crimes_by_minor_category.csv"))
+      timed("Exporting resulting aggregation - by minor category", saveDataFrameToParquet(crimesByMinorCategory, "total_crimes_by_minor_category.parquet"))
 
       logger.info("Calculating total crimes by borough and year")
       val crimesByBoroughAndYear = timed("Calculate total crimes by borough and year", calculateCrimeCountByBoroughAndYear(contents))
-      timed("Exporting resulting aggregation - by borough and year", saveDataFrame(crimesByBoroughAndYear, "total_crimes_by_borough_year.csv"))
+      timed("Exporting resulting aggregation - by borough and year", saveDataFrameToCsv(crimesByBoroughAndYear, "total_crimes_by_borough_year.csv"))
+      timed("Exporting resulting aggregation - by borough and year", saveDataFrameToParquet(crimesByBoroughAndYear, "total_crimes_by_borough_year.parquet"))
 
       logger.info("Calculating total crimes by major category and year")
       val crimesByMajorCategoryAndYear = timed("Calculate total crimes by major category and year", calculateCrimesByMajorCategoryAndYear(contents))
-      timed("Exporting resulting aggregation - by major category and year", saveDataFrame(crimesByMajorCategoryAndYear, "total_crimes_by_major_category_year.csv"))
+      timed("Exporting resulting aggregation - by major category and year", saveDataFrameToCsv(crimesByMajorCategoryAndYear, "total_crimes_by_major_category_year.csv"))
+      timed("Exporting resulting aggregation - by major category and year", saveDataFrameToParquet(crimesByMajorCategoryAndYear, "total_crimes_by_major_category_year.parquet"))
 
       logger.info("Calculating total crimes by minor category and year")
       val crimesByMinorCategoryAndYear = timed("Calculate total crimes by minor category and year", calculateCrimesByMinorCategoryAndYear(contents))
-      timed("Exporting resulting aggregation - by minor category and year", saveDataFrame(crimesByMinorCategoryAndYear, "total_crimes_by_minor_category_year.csv"))
+      timed("Exporting resulting aggregation - by minor category and year", saveDataFrameToCsv(crimesByMinorCategoryAndYear, "total_crimes_by_minor_category_year.csv"))
+      timed("Exporting resulting aggregation - by minor category and year", saveDataFrameToParquet(crimesByMinorCategoryAndYear, "total_crimes_by_minor_category_year.parquet"))
 
       logger.info("Calculating total crimes by year")
       val crimesByYear = timed("Calculate total crimes by year", calculateCrimesByYear(contents))
-      timed("Exporting crimes by year results", saveDataFrame(crimesByYear, "total_crimes_by_year.csv"))
+      timed("Exporting crimes by year results", saveDataFrameToCsv(crimesByYear, "total_crimes_by_year.csv"))
+      timed("Exporting crimes by year results", saveDataFrameToParquet(crimesByYear, "total_crimes_by_year.parquet"))
 
       logger.info("Calculating total crimes by year and month")
       val crimesByYearMonth = timed("Calculate total crimes by year", calculateCrimesByYearAndMonth(contents))
-      timed("Exporting crimes by year and month results", saveDataFrame(crimesByYearMonth, "total_crimes_by_year_month.csv"))
+      timed("Exporting crimes by year and month results", saveDataFrameToCsv(crimesByYearMonth, "total_crimes_by_year_month.csv"))
+      timed("Exporting crimes by year and month results", saveDataFrameToParquet(crimesByYearMonth, "total_crimes_by_year_month.parquet"))
 
       println(timing)
 
@@ -83,7 +95,6 @@ object ExtractLondonCrimeData {
     } else {
       logger.error(s"File '${args(0)}' does not exist")
     }
-
   }
 
   def readContents(contents: RDD[String], sparkSession: SparkSession): (List[String], DataFrame) = {
