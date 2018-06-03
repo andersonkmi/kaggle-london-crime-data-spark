@@ -40,6 +40,7 @@ At the end, the following folders are created inside the project:
 * _total_crimes_by_minor_category_year.csv_
 * _total_crimes_by_year.csv_
 * _total_crimes_by_year_month.csv_
+* _crime_percentage_2016.csv_
 
 The following folders are also created containing the parquet files:
 * _borough.parquet_
@@ -54,6 +55,7 @@ The following folders are also created containing the parquet files:
 * _total_crimes_by_minor_category_year.parquet_
 * _total_crimes_by_year.parquet_
 * _total_crimes_by_year_month.parquet_
+* _crime_percentage_2016.parquet_
 
 each containing the results of each filter applied to the original data set.
 

@@ -4,6 +4,7 @@ import java.nio.file.{FileSystems, Files}
 
 import org.apache.log4j.{Level, Logger}
 import org.apache.spark.rdd.RDD
+import org.apache.spark.sql.expressions.Window
 import org.apache.spark.sql.types._
 import org.apache.spark.sql.functions._
 import org.apache.spark.sql.{DataFrame, Row, SparkSession}
@@ -12,6 +13,7 @@ import org.sharpsw.spark.utils.TraceUtil.{timed, timing}
 
 object ExtractLondonCrimeData {
   val sparkSession: SparkSession = SparkSession.builder.appName("ExtractLondonCrimeData").master("local[*]").getOrCreate()
+  import sparkSession.implicits._
 
   def main(args: Array[String]): Unit = {
     @transient lazy val logger = Logger.getLogger(getClass.getName)
@@ -29,6 +31,7 @@ object ExtractLondonCrimeData {
       logger.info("Printing data set schema information:")
       headerColumns.foreach(println)
 
+      /*
       logger.info("Extracting distinct boroughs")
       val boroughs = timed("Extracting distinct boroughs", extractDistinctBoroughs(contents))
       timed("Exporting boroughs to csv", saveDataFrameToCsv(boroughs, "borough.csv"))
@@ -87,7 +90,12 @@ object ExtractLondonCrimeData {
       logger.info("Calculating total crimes by year and month")
       val crimesByYearMonth = timed("Calculate total crimes by year", calculateCrimesByYearAndMonth(contents))
       timed("Exporting crimes by year and month results", saveDataFrameToCsv(crimesByYearMonth, "total_crimes_by_year_month.csv"))
-      timed("Exporting crimes by year and month results", saveDataFrameToParquet(crimesByYearMonth, "total_crimes_by_year_month.parquet"))
+      timed("Exporting crimes by year and month results", saveDataFrameToParquet(crimesByYearMonth, "total_crimes_by_year_month.parquet"))*/
+
+      logger.info("Percentages of crimes in 2016")
+      val crimesPercentage2016 = timed("Crime percentage in 2016", calculateCrimePercentageByCategoryIn2016(contents))
+      timed("Exporting crime percentage in 2016 to CSV", saveDataFrameToCsv(crimesPercentage2016, "crime_percentage_2016.csv"))
+      timed("Exporting crime percentage in 2016 to parquet", saveDataFrameToParquet(crimesPercentage2016, "crime_percentage_2016.parquet"))
 
       println(timing)
 
@@ -152,6 +160,16 @@ object ExtractLondonCrimeData {
 
   def calculateCrimesByYearAndMonth(contents: DataFrame): DataFrame = {
     contents.groupBy(contents("year"), contents("month")).agg(sum(contents("value")).alias("total")).sort(desc("year"), desc("month"))
+  }
+
+  def calculateCrimePercentageByCategoryIn2016(contents: DataFrame): DataFrame = {
+    calculateCrimePercentageByCategoryByYear(contents, 2016)
+  }
+
+  def calculateCrimePercentageByCategoryByYear(contents: DataFrame, year: Int): DataFrame = {
+    val byMajorCategory = Window.rowsBetween(Window.unboundedPreceding, Window.unboundedFollowing)
+    val filtered = contents.filter($"year" === 2016)//.drop("lsoa_code").drop("borough").drop("month").drop("minor_category").drop("year")
+    filtered.groupBy(filtered("major_category")).agg(sum(filtered("value")).alias("occurrences")).sort(desc("occurrences")).withColumn("total", sum(col("occurrences")).over(byMajorCategory)).withColumn("percentage", col("occurrences")*100/col("total")).drop(col("occurrences")).drop(col("total"))
   }
 
   def row(line: List[String]): Row = {
