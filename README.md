@@ -16,6 +16,7 @@ extracts and saves the following information:
 * Total number of crimes by minor category and year
 * Total number of crimes by year
 * Total number of crimes by year and month
+* Crime category percentage (2016)
 
 In order to run it, the CSV file download from the Kaggle website must be located in the
 root folder of the project and executed as follows:
@@ -71,6 +72,12 @@ $ test
 
 Wait for the unit tests finish the execution to see the results.
 
-## 3. References
+## 3. Executing on Spark - local mode
+In order to run the program inside Spark, the following command can be used (assuming Windows machine):
+```
+$ spark-submit --master local[*] --class org.sharpsw.spark.ExtractLondonCrimeData target\scala-2.11\kaggle-london-crime-data-spark_2.11-<appVersion>.jar london_crime_by_lsoa.csv
+```
+
+## 4. References
 
 [London crime data, 2008-2016 (Kaggle) - last used in May 2018](https://www.kaggle.com/jboysen/london-crime/data)
