@@ -31,7 +31,6 @@ object ExtractLondonCrimeData {
       logger.info("Printing data set schema information:")
       headerColumns.foreach(println)
 
-      /*
       logger.info("Extracting distinct boroughs")
       val boroughs = timed("Extracting distinct boroughs", extractDistinctBoroughs(contents))
       timed("Exporting boroughs to csv", saveDataFrameToCsv(boroughs, "borough.csv"))
@@ -90,7 +89,7 @@ object ExtractLondonCrimeData {
       logger.info("Calculating total crimes by year and month")
       val crimesByYearMonth = timed("Calculate total crimes by year", calculateCrimesByYearAndMonth(contents))
       timed("Exporting crimes by year and month results", saveDataFrameToCsv(crimesByYearMonth, "total_crimes_by_year_month.csv"))
-      timed("Exporting crimes by year and month results", saveDataFrameToParquet(crimesByYearMonth, "total_crimes_by_year_month.parquet"))*/
+      timed("Exporting crimes by year and month results", saveDataFrameToParquet(crimesByYearMonth, "total_crimes_by_year_month.parquet"))
 
       logger.info("Percentages of crimes in 2016")
       val crimesPercentage2016 = timed("Crime percentage in 2016", calculateCrimePercentageByCategoryIn2016(contents))
