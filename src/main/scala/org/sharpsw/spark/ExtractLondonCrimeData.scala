@@ -20,7 +20,7 @@ object ExtractLondonCrimeData {
     logger.info("Starting Extract London Crime data information")
 
     val defaultFS = FileSystems.getDefault
-    if(Files.exists(defaultFS.getPath(args(0)))) {
+    if(args.isEmpty || Files.exists(defaultFS.getPath(args(0)))) {
       Logger.getLogger("org.apache").setLevel(Level.OFF)
 
       logger.info(s"Reading ${args(0)} contents")
@@ -100,7 +100,7 @@ object ExtractLondonCrimeData {
 
       logger.info("Exiting Extract London Crime data information")
     } else {
-      logger.error(s"File '${args(0)}' does not exist")
+      logger.error(s"File '${args(0)}' does not exist or it was not supplied")
     }
   }
 
