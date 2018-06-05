@@ -75,7 +75,7 @@ Wait for the unit tests finish the execution to see the results.
 ## 3. Executing on Spark - local mode
 In order to run the program inside Spark, the following command can be used (assuming Windows machine):
 ```
-$ spark-submit --master local[*] --class org.sharpsw.spark.ExtractLondonCrimeData target\scala-2.11\kaggle-london-crime-data-spark_2.11-<appVersion>.jar london_crime_by_lsoa.csv
+$ spark-submit --master local[*] --class org.sharpsw.spark.ExtractLondonCrimeData target\scala-2.11\kaggle-london-crime-data-spark_2.11-<appVersion>.jar london_crime_by_lsoa.csv D:\temp
 ```
 
 ## 4. References
