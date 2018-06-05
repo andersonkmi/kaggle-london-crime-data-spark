@@ -25,7 +25,7 @@ object ExtractLondonCrimeData {
 
       logger.info(s"Reading ${args(0)} contents")
       val fileContents = sparkSession.sparkContext.textFile(args(0))
-      val (headerColumns, contents) = timed("Step 1 - reading contents", readContents(fileContents, sparkSession))
+      val (headerColumns, contents) = timed("Reading file contents", readContents(fileContents, sparkSession))
       contents.cache()
 
       logger.info("Printing data set schema information:")
