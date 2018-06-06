@@ -32,7 +32,7 @@ object ExtractLondonCrimeData {
       contents.cache()
 
       logger.info("Printing data set schema information:")
-      headerColumns.foreach(println)
+      headerColumns.foreach(logger.info(_))
 
       logger.info("Extracting distinct boroughs")
       val boroughs = timed("Extracting distinct boroughs", extractDistinctBoroughs(contents))
@@ -170,7 +170,7 @@ object ExtractLondonCrimeData {
 
   def calculateCrimePercentageByCategoryByYear(contents: DataFrame, year: Int): DataFrame = {
     val byMajorCategory = Window.rowsBetween(Window.unboundedPreceding, Window.unboundedFollowing)
-    val filtered = contents.filter($"year" === 2016)
+    val filtered = contents.filter($"year" === year)
     filtered.groupBy(filtered("major_category")).agg(sum(filtered("value")).alias("occurrences")).sort(desc("occurrences")).withColumn("total", sum(col("occurrences")).over(byMajorCategory)).withColumn("percentage", col("occurrences")*100/col("total")).drop(col("occurrences")).drop(col("total"))
   }
 
