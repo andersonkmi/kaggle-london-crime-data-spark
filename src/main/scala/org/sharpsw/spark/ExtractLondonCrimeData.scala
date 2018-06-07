@@ -94,11 +94,13 @@ object ExtractLondonCrimeData {
       timed("Exporting crimes by year and month results", saveDataFrameToCsv(crimesByYearMonth, s"${destinationFolder}total_crimes_by_year_month.csv"))
       timed("Exporting crimes by year and month results", saveDataFrameToParquet(crimesByYearMonth, s"${destinationFolder}total_crimes_by_year_month.parquet"))
 
-      logger.info("Percentages of crimes in 2016")
-      val crimesPercentage2016 = timed("Crime percentage in 2016", calculateCrimePercentageByCategoryIn2016(contents))
-      timed("Exporting crime percentage in 2016 to CSV", saveDataFrameToCsv(crimesPercentage2016, s"${destinationFolder}crime_percentage_2016.csv"))
-      timed("Exporting crime percentage in 2016 to parquet", saveDataFrameToParquet(crimesPercentage2016, s"${destinationFolder}crime_percentage_2016.parquet"))
-
+      logger.info("Percentages of crimes by years")
+      val crimePercentageByYear = calculateCrimesPercentageByCategoryAndYear(contents)
+      crimePercentageByYear.foreach(item => {
+        logger.info(s"Exporting crime percentage for year '${item._1}'")
+        timed(s"Exporting crime percentage in ${item._1} to CSV", saveDataFrameToCsv(item._2, s"${destinationFolder}crime_percentage_${item._1}.csv"))
+        timed(s"Exporting crime percentage in ${item._1} to parquet", saveDataFrameToParquet(item._2, s"${destinationFolder}crime_percentage_${item._1}.parquet"))
+      })
       println(timing)
 
       logger.info("Exiting Extract London Crime data information")
@@ -172,6 +174,14 @@ object ExtractLondonCrimeData {
     val byMajorCategory = Window.rowsBetween(Window.unboundedPreceding, Window.unboundedFollowing)
     val filtered = contents.filter($"year" === year)
     filtered.groupBy(filtered("major_category")).agg(sum(filtered("value")).alias("occurrences")).sort(desc("occurrences")).withColumn("total", sum(col("occurrences")).over(byMajorCategory)).withColumn("percentage", col("occurrences")*100/col("total")).drop(col("occurrences")).drop(col("total"))
+  }
+
+  def getYearList(contents: DataFrame): List[Int] = {
+    extractDistinctValues(contents, "year").map(i => i.getInt(0)).collect().toList.reverse
+  }
+
+  def calculateCrimesPercentageByCategoryAndYear(contents: DataFrame): List[(Int, DataFrame)] = {
+    getYearList(contents).map(item => (item, calculateCrimePercentageByCategoryByYear(contents, item)))
   }
 
   def row(line: List[String]): Row = {
