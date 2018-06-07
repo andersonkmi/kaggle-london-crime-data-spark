@@ -16,7 +16,7 @@ extracts and saves the following information:
 * Total number of crimes by minor category and year
 * Total number of crimes by year
 * Total number of crimes by year and month
-* Crime category percentage (2016)
+* Crime category percentage by year (2016-2008)
 
 In order to run it, the CSV file download from the Kaggle website must be located in the
 root folder of the project and executed as follows:
@@ -42,6 +42,14 @@ At the end, the following folders are created inside the project:
 * _total_crimes_by_year.csv_
 * _total_crimes_by_year_month.csv_
 * _crime_percentage_2016.csv_
+* _crime_percentage_2015.csv_
+* _crime_percentage_2014.csv_
+* _crime_percentage_2013.csv_
+* _crime_percentage_2012.csv_
+* _crime_percentage_2011.csv_
+* _crime_percentage_2010.csv_
+* _crime_percentage_2009.csv_
+* _crime_percentage_2008.csv_
 
 The following folders are also created containing the parquet files:
 * _borough.parquet_
@@ -57,6 +65,15 @@ The following folders are also created containing the parquet files:
 * _total_crimes_by_year.parquet_
 * _total_crimes_by_year_month.parquet_
 * _crime_percentage_2016.parquet_
+* _crime_percentage_2015.parquet_
+* _crime_percentage_2014.parquet_
+* _crime_percentage_2013.parquet_
+* _crime_percentage_2012.parquet_
+* _crime_percentage_2011.parquet_
+* _crime_percentage_2010.parquet_
+* _crime_percentage_2009.parquet_
+* _crime_percentage_2008.parquet_
+
 
 each containing the results of each filter applied to the original data set.
 
