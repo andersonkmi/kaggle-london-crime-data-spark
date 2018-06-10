@@ -92,12 +92,19 @@ $ test
 
 Wait for the unit tests finish the execution to see the results.
 
-## 3. Executing on Spark - local mode
+## 3. Executing inside sbt - local mode
+In order to run the program inside Spark, the following command can be used (assuming Windows machine):
+```
+$ sbt 
+$ sbt:kaggle-london-crime-data-saprk> run london_crime_by_lsoa.csv D:\temp local[*]
+```
+
+## 4. Executing on Spark - local mode
 In order to run the program inside Spark, the following command can be used (assuming Windows machine):
 ```
 $ spark-submit --master local[*] --class org.sharpsw.spark.ExtractLondonCrimeData target\scala-2.11\kaggle-london-crime-data-spark_2.11-<appVersion>.jar london_crime_by_lsoa.csv D:\temp
 ```
 
-## 4. References
+## 5. References
 
 [London crime data, 2008-2016 (Kaggle) - last used in May 2018](https://www.kaggle.com/jboysen/london-crime/data)
