@@ -14,11 +14,10 @@ import org.sharpsw.spark.utils.TraceUtil.{timed, timing}
 object ExtractLondonCrimeData {
 
   def main(args: Array[String]): Unit = {
-    val sparkSession: SparkSession = if(args.size == 3) SparkSession.builder.appName("ExtractLondonCrimeData").master(args(2)).getOrCreate() else SparkSession.builder.appName("ExtractLondonCrimeData").getOrCreate()
-
     @transient lazy val logger = Logger.getLogger(getClass.getName)
     logger.info("Starting Extract London Crime data information")
 
+    val sparkSession: SparkSession = if(args.length == 3) SparkSession.builder.appName("ExtractLondonCrimeData").master(args(2)).getOrCreate() else SparkSession.builder.appName("ExtractLondonCrimeData").getOrCreate()
     val defaultFS = getDefault
 
     if(args.nonEmpty && exists(defaultFS.getPath(args(0)))) {
