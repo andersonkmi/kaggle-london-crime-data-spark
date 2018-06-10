@@ -1,13 +1,16 @@
 package org.sharpsw.spark
 
 import org.apache.spark.sql.types.{IntegerType, StringType, StructField, StructType}
-import org.apache.spark.sql.{DataFrame, Row}
+import org.apache.spark.sql.{DataFrame, Row, SparkSession}
 import org.scalatest.{BeforeAndAfterAll, FlatSpec, Matchers}
 import ExtractLondonCrimeData._
-import ExtractLondonCrimeData.sparkSession.implicits._
+//import ExtractLondonCrimeData.sparkSession.implicits._
 
 class ExtractLondonCrimeDataSpec extends FlatSpec with Matchers with BeforeAndAfterAll {
-  def initializeExtractLondonCrimeData(): Boolean =
+  val sparkSession: SparkSession = SparkSession.builder.appName("ExtractLondonCrimeData").master("local[*]").getOrCreate()
+  import sparkSession.implicits._
+
+  /*def initializeExtractLondonCrimeData(): Boolean =
     try {
       ExtractLondonCrimeData
       true
@@ -21,7 +24,7 @@ class ExtractLondonCrimeDataSpec extends FlatSpec with Matchers with BeforeAndAf
   override def afterAll(): Unit = {
     assert(initializeExtractLondonCrimeData(), " -- did you fill in all the values in WordCount (sc)?")
     sparkSession.sparkContext.stop()
-  }
+  }*/
 
 
   private def createDataFrame(): DataFrame = {

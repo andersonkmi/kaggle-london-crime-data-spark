@@ -12,17 +12,17 @@ import org.sharpsw.spark.utils.DataFrameUtil.{extractDistinctValues, saveDataFra
 import org.sharpsw.spark.utils.TraceUtil.{timed, timing}
 
 object ExtractLondonCrimeData {
-  val sparkSession: SparkSession = SparkSession.builder.appName("ExtractLondonCrimeData").master("local[*]").getOrCreate()
-  import sparkSession.implicits._
 
   def main(args: Array[String]): Unit = {
+    val sparkSession: SparkSession = if(args.size == 3) SparkSession.builder.appName("ExtractLondonCrimeData").master(args(2)).getOrCreate() else SparkSession.builder.appName("ExtractLondonCrimeData").getOrCreate()
+
     @transient lazy val logger = Logger.getLogger(getClass.getName)
     logger.info("Starting Extract London Crime data information")
 
     val defaultFS = getDefault
 
     if(args.nonEmpty && exists(defaultFS.getPath(args(0)))) {
-      val destinationFolder = (if(args.length == 2) args(1) else ".") + defaultFS.getSeparator
+      val destinationFolder = (if(args.length == 2 || args.length == 3) args(1) else ".") + defaultFS.getSeparator
 
       Logger.getLogger("org.apache").setLevel(Level.OFF)
 
@@ -100,7 +100,7 @@ object ExtractLondonCrimeData {
       timed("Exporting crimes by year and month results", saveDataFrameToParquet(crimesByYearMonth, s"${destinationFolder}total_crimes_by_year_month.parquet"))
 
       logger.info("Percentages of crimes by years")
-      val crimePercentageByYear = calculateCrimesPercentageByCategoryAndYear(contents)
+      val crimePercentageByYear = calculateCrimesPercentageByCategoryAndYear(contents, sparkSession)
       crimePercentageByYear.foreach(item => {
         logger.info(s"Exporting crime percentage for year '${item._1}'")
         timed(s"Exporting crime percentage in ${item._1} to CSV", saveDataFrameToCsv(item._2, s"${destinationFolder}crime_percentage_${item._1}.csv"))
@@ -175,22 +175,20 @@ object ExtractLondonCrimeData {
     contents.groupBy(contents("year"), contents("month")).agg(sum(contents("value")).alias("total")).sort(desc("year"), desc("month"))
   }
 
-  def calculateCrimePercentageByCategoryIn2016(contents: DataFrame): DataFrame = {
-    calculateCrimePercentageByCategoryByYear(contents, 2016)
-  }
-
-  def calculateCrimePercentageByCategoryByYear(contents: DataFrame, year: Int): DataFrame = {
+  def calculateCrimePercentageByCategoryByYear(contents: DataFrame, year: Int, sparkSession: SparkSession): DataFrame = {
+    import sparkSession.implicits._
     val byMajorCategory = Window.rowsBetween(Window.unboundedPreceding, Window.unboundedFollowing)
     val filtered = contents.filter($"year" === year)
     filtered.groupBy(filtered("major_category")).agg(sum(filtered("value")).alias("occurrences")).sort(desc("occurrences")).withColumn("total", sum(col("occurrences")).over(byMajorCategory)).withColumn("percentage", col("occurrences")*100/col("total")).drop(col("occurrences")).drop(col("total"))
   }
 
-  def getYearList(contents: DataFrame): List[Int] = {
+  def getYearList(contents: DataFrame, sparkSession: SparkSession): List[Int] = {
+    import sparkSession.implicits._
     extractDistinctValues(contents, "year").map(i => i.getInt(0)).collect().toList.reverse
   }
 
-  def calculateCrimesPercentageByCategoryAndYear(contents: DataFrame): List[(Int, DataFrame)] = {
-    getYearList(contents).map(item => (item, calculateCrimePercentageByCategoryByYear(contents, item)))
+  def calculateCrimesPercentageByCategoryAndYear(contents: DataFrame, sparkSession: SparkSession): List[(Int, DataFrame)] = {
+    getYearList(contents, sparkSession).map(item => (item, calculateCrimePercentageByCategoryByYear(contents, item, sparkSession)))
   }
 
   def row(line: List[String]): Row = {
