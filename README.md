@@ -7,6 +7,7 @@ Initial program to filter distinct values from the London crime data set. This p
 extracts and saves the following information:
 
 * Distinct boroughs found in the data set
+* Distinct boroughs and LSOA codes
 * Distinct major categories crimes
 * Distinct minor categories crimes
 * Total number of crimes by borough in descending order
@@ -30,6 +31,7 @@ $ run london_crime_by_lsoa.csv
 At the end, the following folders are created inside the project:
 
 * _borough.csv_
+* _lsoa.csv_
 * _categories.csv_
 * _major_category.csv_
 * _minor_category.csv_
@@ -53,6 +55,7 @@ At the end, the following folders are created inside the project:
 
 The following folders are also created containing the parquet files:
 * _borough.parquet_
+* _lsoa.parquet_
 * _categories.parquet_
 * _major_category.parquet_
 * _minor_category.parquet_

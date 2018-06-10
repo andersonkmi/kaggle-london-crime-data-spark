@@ -39,6 +39,11 @@ object ExtractLondonCrimeData {
       timed("Exporting boroughs to csv", saveDataFrameToCsv(boroughs, s"${destinationFolder}borough.csv"))
       timed("Exporting the boroughs data frame to parquet", saveDataFrameToParquet(boroughs, s"${destinationFolder}borough.parquet"))
 
+      logger.info("Extracting LSOA codes by borough")
+      val lsoa = timed("Extracting LSOA codes by borough", extractBoroughLsoa(contents))
+      timed("Exporting lsoa codes to csv", saveDataFrameToCsv(lsoa, s"${destinationFolder}lsoa.csv"))
+      timed("Exporting lsoa codes to parquet", saveDataFrameToParquet(lsoa, s"${destinationFolder}lsoa.parquet"))
+
       logger.info("Extracting distinct major crime categories")
       val majorCrimeCategories = timed("Extracting major categories", extractDistinctMajorCrimeCategories(contents))
       timed("Exporting major categories to csv", saveDataFrameToCsv(majorCrimeCategories, s"${destinationFolder}major_category.csv"))
@@ -120,6 +125,10 @@ object ExtractLondonCrimeData {
 
   def extractDistinctBoroughs(contents: DataFrame): DataFrame = {
     extractDistinctValues(contents, "borough")
+  }
+
+  def extractBoroughLsoa(contents: DataFrame): DataFrame = {
+    contents.select("borough", "lsoa_code").distinct().sort(asc("borough"), asc("lsoa_code"))
   }
 
   def extractDistinctMajorCrimeCategories(contents: DataFrame): DataFrame = {
