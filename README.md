@@ -25,7 +25,7 @@ root folder of the project and executed as follows:
 ```
 $ sbt
 ...
-$ run london_crime_by_lsoa.csv
+$ run london_crime_by_lsoa.csv D:\temp local[*]
 ```
 
 At the end, the following folders are created inside the project:
