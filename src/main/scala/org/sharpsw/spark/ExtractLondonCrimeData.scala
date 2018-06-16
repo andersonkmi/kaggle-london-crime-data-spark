@@ -20,7 +20,7 @@ object ExtractLondonCrimeData {
     if(args.nonEmpty && exists(defaultFS.getPath(args(0)))) {
       val destinationFolder = (if(args.length == 2 || args.length == 3) args(1) else ".") + defaultFS.getSeparator
 
-      Logger.getLogger("org.apache").setLevel(Level.OFF)
+      Logger.getLogger("org.apache").setLevel(Level.ERROR)
 
       logger.info(s"Reading ${args(0)} contents")
       val fileContents = sparkSession.sparkContext.textFile(args(0))
@@ -62,38 +62,38 @@ object ExtractLondonCrimeData {
 
       logger.info("Calculating total crimes by major category")
       val crimesByMajorCategory = timed("Calculate total crimes by major category", calculateCrimesByMajorCategory(contents))
-      timed("Exporting resulting aggregation - by major category", saveDataFrameToCsv(crimesByMajorCategory, s"${destinationFolder}total_crimes_by_major_category.csv"))
-      timed("Exporting resulting aggregation - by major category", saveDataFrameToParquet(crimesByMajorCategory, s"${destinationFolder}total_crimes_by_major_category.parquet"))
+      timed("Exporting resulting aggregation - by major category to csv", saveDataFrameToCsv(crimesByMajorCategory, s"${destinationFolder}total_crimes_by_major_category.csv"))
+      timed("Exporting resulting aggregation - by major category to parquet", saveDataFrameToParquet(crimesByMajorCategory, s"${destinationFolder}total_crimes_by_major_category.parquet"))
 
       logger.info("Calculating total crimes by minor category")
       val crimesByMinorCategory = timed("Calculate total crimes by minor category", calculateCrimeCountByMinorCategory(contents))
-      timed("Exporting resulting aggregation - by minor category", saveDataFrameToCsv(crimesByMinorCategory, s"${destinationFolder}total_crimes_by_minor_category.csv"))
-      timed("Exporting resulting aggregation - by minor category", saveDataFrameToParquet(crimesByMinorCategory, s"${destinationFolder}total_crimes_by_minor_category.parquet"))
+      timed("Exporting resulting aggregation - by minor category to csv", saveDataFrameToCsv(crimesByMinorCategory, s"${destinationFolder}total_crimes_by_minor_category.csv"))
+      timed("Exporting resulting aggregation - by minor category to parquet", saveDataFrameToParquet(crimesByMinorCategory, s"${destinationFolder}total_crimes_by_minor_category.parquet"))
 
       logger.info("Calculating total crimes by borough and year")
       val crimesByBoroughAndYear = timed("Calculate total crimes by borough and year", calculateCrimeCountByBoroughAndYear(contents))
-      timed("Exporting resulting aggregation - by borough and year", saveDataFrameToCsv(crimesByBoroughAndYear, s"${destinationFolder}total_crimes_by_borough_year.csv"))
-      timed("Exporting resulting aggregation - by borough and year", saveDataFrameToParquet(crimesByBoroughAndYear, s"${destinationFolder}total_crimes_by_borough_year.parquet"))
+      timed("Exporting resulting aggregation - by borough and year to csv", saveDataFrameToCsv(crimesByBoroughAndYear, s"${destinationFolder}total_crimes_by_borough_year.csv"))
+      timed("Exporting resulting aggregation - by borough and year to parquet", saveDataFrameToParquet(crimesByBoroughAndYear, s"${destinationFolder}total_crimes_by_borough_year.parquet"))
 
       logger.info("Calculating total crimes by major category and year")
       val crimesByMajorCategoryAndYear = timed("Calculate total crimes by major category and year", calculateCrimesByMajorCategoryAndYear(contents))
-      timed("Exporting resulting aggregation - by major category and year", saveDataFrameToCsv(crimesByMajorCategoryAndYear, s"${destinationFolder}total_crimes_by_major_category_year.csv"))
-      timed("Exporting resulting aggregation - by major category and year", saveDataFrameToParquet(crimesByMajorCategoryAndYear, s"${destinationFolder}total_crimes_by_major_category_year.parquet"))
+      timed("Exporting resulting aggregation - by major category and year to csv", saveDataFrameToCsv(crimesByMajorCategoryAndYear, s"${destinationFolder}total_crimes_by_major_category_year.csv"))
+      timed("Exporting resulting aggregation - by major category and year to parquet", saveDataFrameToParquet(crimesByMajorCategoryAndYear, s"${destinationFolder}total_crimes_by_major_category_year.parquet"))
 
       logger.info("Calculating total crimes by minor category and year")
       val crimesByMinorCategoryAndYear = timed("Calculate total crimes by minor category and year", calculateCrimesByMinorCategoryAndYear(contents))
-      timed("Exporting resulting aggregation - by minor category and year", saveDataFrameToCsv(crimesByMinorCategoryAndYear, s"${destinationFolder}total_crimes_by_minor_category_year.csv"))
-      timed("Exporting resulting aggregation - by minor category and year", saveDataFrameToParquet(crimesByMinorCategoryAndYear, s"${destinationFolder}total_crimes_by_minor_category_year.parquet"))
+      timed("Exporting resulting aggregation - by minor category and year to csv", saveDataFrameToCsv(crimesByMinorCategoryAndYear, s"${destinationFolder}total_crimes_by_minor_category_year.csv"))
+      timed("Exporting resulting aggregation - by minor category and year to parquet", saveDataFrameToParquet(crimesByMinorCategoryAndYear, s"${destinationFolder}total_crimes_by_minor_category_year.parquet"))
 
       logger.info("Calculating total crimes by year")
       val crimesByYear = timed("Calculate total crimes by year", calculateCrimesByYear(contents))
-      timed("Exporting crimes by year results", saveDataFrameToCsv(crimesByYear, s"${destinationFolder}total_crimes_by_year.csv"))
-      timed("Exporting crimes by year results", saveDataFrameToParquet(crimesByYear, s"${destinationFolder}total_crimes_by_year.parquet"))
+      timed("Exporting crimes by year results to csv", saveDataFrameToCsv(crimesByYear, s"${destinationFolder}total_crimes_by_year.csv"))
+      timed("Exporting crimes by year results to parquet", saveDataFrameToParquet(crimesByYear, s"${destinationFolder}total_crimes_by_year.parquet"))
 
       logger.info("Calculating total crimes by year and month")
       val crimesByYearMonth = timed("Calculate total crimes by year", calculateCrimesByYearAndMonth(contents))
-      timed("Exporting crimes by year and month results", saveDataFrameToCsv(crimesByYearMonth, s"${destinationFolder}total_crimes_by_year_month.csv"))
-      timed("Exporting crimes by year and month results", saveDataFrameToParquet(crimesByYearMonth, s"${destinationFolder}total_crimes_by_year_month.parquet"))
+      timed("Exporting crimes by year and month results to CSV", saveDataFrameToCsv(crimesByYearMonth, s"${destinationFolder}total_crimes_by_year_month.csv"))
+      timed("Exporting crimes by year and month results to parquet", saveDataFrameToParquet(crimesByYearMonth, s"${destinationFolder}total_crimes_by_year_month.parquet"))
 
       logger.info("Percentages of crimes by years")
       val crimePercentageByYear = calculateCrimesPercentageByCategoryAndYear(contents, sparkSession)
@@ -102,6 +102,11 @@ object ExtractLondonCrimeData {
         timed(s"Exporting crime percentage in ${item._1} to CSV", saveDataFrameToCsv(item._2, s"${destinationFolder}crime_percentage_${item._1}.csv"))
         timed(s"Exporting crime percentage in ${item._1} to parquet", saveDataFrameToParquet(item._2, s"${destinationFolder}crime_percentage_${item._1}.parquet"))
       })
+
+      logger.info("Calculating total crimes by year and LSOA codes")
+      val totalCrimesByYearAndLsoa = timed("Calculating total crimes by year and lsoa codes", calculateTotalCrimesByYearLsoaCode(contents))
+      timed("Exporting results to csv", saveDataFrameToCsv(totalCrimesByYearAndLsoa, s"${destinationFolder}total_crimes_by_year_lsoa_code.csv"))
+      timed("Exporting results to parquet", saveDataFrameToCsv(totalCrimesByYearAndLsoa, s"${destinationFolder}total_crimes_by_year_lsoa_code.parquet"))
       println(timing)
 
       logger.info("Exiting Extract London Crime data information")
