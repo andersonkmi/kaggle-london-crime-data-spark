@@ -106,4 +106,8 @@ object LondonCrimeDataExplorer {
   def calculateCrimesPercentageByCategoryAndYear(contents: DataFrame, sparkSession: SparkSession): List[(Int, DataFrame)] = {
     getYearList(contents, sparkSession).map(item => (item, calculateCrimePercentageByCategoryByYear(contents, item, sparkSession)))
   }
+
+  def calculateTotalCrimesByYearLsoaCode(contents: DataFrame): DataFrame = {
+    contents.groupBy(contents("year"), contents("borough"), contents("lsoa_code")).agg(sum(contents("value")).alias("total")).sort(desc("year"), asc("borough"), asc("lsoa_code"))
+  }
 }
