@@ -12,3 +12,4 @@ tmp/*
 target/
 *.csv
 *.parquet
+*.jar

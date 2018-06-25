@@ -111,12 +111,12 @@ $ sbt:kaggle-london-crime-data-saprk> run --local london_crime_by_lsoa.csv --des
 ## 4. Executing on Spark - local mode
 In order to run the program inside Spark, the following command can be used (assuming Windows machine):
 ```
-$ spark-submit --master local[*] --class org.sharpsw.spark.ExtractLondonCrimeData target\scala-2.11\kaggle-london-crime-data-spark_2.11-<appVersion>.jar --aws-s3 org.sharpsw.spark/kaggle-london-crime-data/input/london_crime_by_lsoa.csv --destination D:\temp
+$ spark-submit --master local[*] --jars aws-java-sdk-kms-1.11.354.jar,aws-java-sdk-s3-1.11.354.jar,aws-java-sdk-core-1.11.354.jar --class org.sharpsw.spark.ExtractLondonCrimeData target\scala-2.11\kaggle-london-crime-data-spark_2.11-<appVersion>.jar --aws-s3 org.sharpsw.spark/kaggle-london-crime-data/input/london_crime_by_lsoa.csv --destination D:\temp
 ```
 
 In order to run the program inside Spark using a local CSV, the following command can be used (assuming Windows machine):
 ```
-$ spark-submit --master local[*] --class org.sharpsw.spark.ExtractLondonCrimeData target\scala-2.11\kaggle-london-crime-data-spark_2.11-<appVersion>.jar --local london_crime_by_lsoa.csv --destination D:\temp
+$ spark-submit --master local[*] --jars aws-java-sdk-kms-1.11.354.jar,aws-java-sdk-s3-1.11.354.jar,aws-java-sdk-core-1.11.354.jar --class org.sharpsw.spark.ExtractLondonCrimeData target\scala-2.11\kaggle-london-crime-data-spark_2.11-<appVersion>.jar --local london_crime_by_lsoa.csv --destination D:\temp
 ```
 
 ## 5. References
