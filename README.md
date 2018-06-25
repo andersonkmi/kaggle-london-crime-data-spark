@@ -26,7 +26,7 @@ root folder of the project and executed as follows:
 ```
 $ sbt
 ...
-$ run london_crime_by_lsoa.csv D:\temp local[*]
+$ run --aws-s3 bucket/path/london_crime_by_lsoa.csv --destination D:\temp --master local[*]
 ```
 
 At the end, the following folders are created inside the project:
@@ -96,16 +96,27 @@ $ test
 Wait for the unit tests finish the execution to see the results.
 
 ## 3. Executing inside sbt - local mode
-In order to run the program inside Spark, the following command can be used (assuming Windows machine):
+In order to run the program as standalone mode and using the CSV from S3, the following command can be used (assuming Windows machine):
 ```
 $ sbt 
-$ sbt:kaggle-london-crime-data-saprk> run london_crime_by_lsoa.csv D:\temp local[*]
+$ sbt:kaggle-london-crime-data-saprk> run --aws-s3 org.sharpsw.spark/kaggle-london-crime-data/input/london_crime_by_lsoa.csv --destination D:\temp --master local[*]
+```
+
+In order to run the program as standalone mode and using the CSV locally, the following command can be used (assuming Windows machine):
+```
+$ sbt 
+$ sbt:kaggle-london-crime-data-saprk> run --local london_crime_by_lsoa.csv --destination D:\temp --master local[*]
 ```
 
 ## 4. Executing on Spark - local mode
 In order to run the program inside Spark, the following command can be used (assuming Windows machine):
 ```
-$ spark-submit --master local[*] --class org.sharpsw.spark.ExtractLondonCrimeData target\scala-2.11\kaggle-london-crime-data-spark_2.11-<appVersion>.jar london_crime_by_lsoa.csv D:\temp
+$ spark-submit --master local[*] --class org.sharpsw.spark.ExtractLondonCrimeData target\scala-2.11\kaggle-london-crime-data-spark_2.11-<appVersion>.jar --aws-s3 org.sharpsw.spark/kaggle-london-crime-data/input/london_crime_by_lsoa.csv --destination D:\temp
+```
+
+In order to run the program inside Spark using a local CSV, the following command can be used (assuming Windows machine):
+```
+$ spark-submit --master local[*] --class org.sharpsw.spark.ExtractLondonCrimeData target\scala-2.11\kaggle-london-crime-data-spark_2.11-<appVersion>.jar --local london_crime_by_lsoa.csv --destination D:\temp
 ```
 
 ## 5. References

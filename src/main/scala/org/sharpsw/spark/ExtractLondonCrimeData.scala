@@ -7,7 +7,6 @@ import org.apache.spark.sql.SparkSession
 import org.sharpsw.spark.utils.DataFrameUtil.{saveDataFrameToCsv, saveDataFrameToParquet}
 import org.sharpsw.spark.utils.TraceUtil.{timed, timing}
 import LondonCrimeDataExplorer._
-import org.sharpsw.spark.utils.S3Util
 import org.sharpsw.spark.utils.S3Util.downloadObject
 
 object ExtractLondonCrimeData {
@@ -20,8 +19,7 @@ object ExtractLondonCrimeData {
       @transient lazy val logger = Logger.getLogger(getClass.getName)
       logger.info("Processing London crime data information")
 
-      val sparkSession: SparkSession = if(args.length == 4) SparkSession.builder.appName("ExtractLondonCrimeData").getOrCreate() else SparkSession.builder.appName("ExtractLondonCrimeData").master(args(5)).getOrCreate()
-      //val defaultFS = getDefault
+      val sparkSession: SparkSession = if(args.length == 4) SparkSession.builder.appName("ExtractLondonCrimeData").getOrCreate() else SparkSession.builder.appName("ExtractLondonCrimeData").master(args(5)).config("spark.rpc.askTimeout", 800).getOrCreate()
 
       var inputFile = "london_crime_by_lsoa.csv"
       if(args(0).equals(LocalFileInputSource)) {
