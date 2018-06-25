@@ -1,29 +1,48 @@
 package org.sharpsw.spark
 
 import java.nio.file.FileSystems.getDefault
-import java.nio.file.Files.exists
+
 import org.apache.log4j.{Level, Logger}
 import org.apache.spark.sql.SparkSession
 import org.sharpsw.spark.utils.DataFrameUtil.{saveDataFrameToCsv, saveDataFrameToParquet}
 import org.sharpsw.spark.utils.TraceUtil.{timed, timing}
 import LondonCrimeDataExplorer._
+import org.sharpsw.spark.utils.S3Util
+import org.sharpsw.spark.utils.S3Util.downloadObject
 
 object ExtractLondonCrimeData {
+  private val LocalFileInputSource:String = "--local"
+  private val S3FileInputSource:String = "--aws-s3"
 
   def main(args: Array[String]): Unit = {
-    @transient lazy val logger = Logger.getLogger(getClass.getName)
-    logger.info("Starting Extract London Crime data information")
 
-    val sparkSession: SparkSession = if(args.length == 3) SparkSession.builder.appName("ExtractLondonCrimeData").master(args(2)).getOrCreate() else SparkSession.builder.appName("ExtractLondonCrimeData").getOrCreate()
-    val defaultFS = getDefault
+    if(args.nonEmpty) {
+      @transient lazy val logger = Logger.getLogger(getClass.getName)
+      logger.info("Processing London crime data information")
 
-    if(args.nonEmpty && exists(defaultFS.getPath(args(0)))) {
-      val destinationFolder = if(args.length == 2 || args.length == 3) args(1) else "."
+      val sparkSession: SparkSession = if(args.length == 4) SparkSession.builder.appName("ExtractLondonCrimeData").getOrCreate() else SparkSession.builder.appName("ExtractLondonCrimeData").master(args(5)).getOrCreate()
+      //val defaultFS = getDefault
 
+      var inputFile = "london_crime_by_lsoa.csv"
+      if(args(0).equals(LocalFileInputSource)) {
+        inputFile = args(1)
+      } else if(args(0).equals(S3FileInputSource)) {
+        val originalPath = args(1)
+        val tokens = originalPath.split("/")
+        inputFile = tokens.last
+
+        val bucket = tokens.head
+        val key = tokens.tail.mkString("/")
+
+        logger.info(s"Downloading object $key from bucket $bucket")
+        downloadObject(bucket, key)
+      }
+
+      val destinationFolder = args(3)
       Logger.getLogger("org.apache").setLevel(Level.ERROR)
 
-      logger.info(s"Reading ${args(0)} contents")
-      val fileContents = sparkSession.sparkContext.textFile(args(0))
+      logger.info(s"Reading $inputFile contents")
+      val fileContents = sparkSession.sparkContext.textFile(inputFile)
       val (headerColumns, contents) = timed("Reading file contents", readContents(fileContents, sparkSession))
       contents.cache()
 

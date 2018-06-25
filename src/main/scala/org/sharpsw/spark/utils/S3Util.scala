@@ -4,7 +4,6 @@ import java.io.File.separator
 import java.io.{File, FileOutputStream}
 
 import com.amazonaws.services.s3.AmazonS3ClientBuilder
-//import com.amazonaws.services.s3.model.{ListObjectsRequest, ObjectMetadata, PutObjectRequest, S3ObjectSummary}
 
 object S3Util {
   private val s3Service = AmazonS3ClientBuilder.standard.build
@@ -15,7 +14,7 @@ object S3Util {
     val tokens = key.split("/")
 
     val path = new File(local)
-    path.mkdirs()
+    //path.mkdirs()
     val fos = new FileOutputStream(new File(path.getAbsolutePath + separator + tokens.last))
     val read_buf = new Array[Byte](1024)
     var len = s3is.read(read_buf)
