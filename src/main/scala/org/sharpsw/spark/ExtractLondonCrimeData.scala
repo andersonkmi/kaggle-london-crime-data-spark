@@ -1,5 +1,6 @@
 package org.sharpsw.spark
 
+import java.io.File
 import java.nio.file.FileSystems.getDefault
 
 import org.apache.log4j.{Level, Logger}
@@ -7,6 +8,8 @@ import org.apache.spark.sql.SparkSession
 import org.sharpsw.spark.utils.DataFrameUtil.{saveDataFrameToCsv, saveDataFrameToParquet}
 import org.sharpsw.spark.utils.TraceUtil.{timed, timing}
 import LondonCrimeDataExplorer._
+import org.sharpsw.spark.utils.{FileUtil, S3Util}
+import org.sharpsw.spark.utils.FileUtil.getListOfFiles
 import org.sharpsw.spark.utils.S3Util.downloadObject
 
 object ExtractLondonCrimeData {
@@ -20,6 +23,8 @@ object ExtractLondonCrimeData {
       logger.info("Processing London crime data information")
 
       val sparkSession: SparkSession = if(args.length == 4) SparkSession.builder.appName("ExtractLondonCrimeData").getOrCreate() else SparkSession.builder.appName("ExtractLondonCrimeData").master(args(5)).config("spark.rpc.askTimeout", 800).getOrCreate()
+
+      val usingS3 = args(0).equals(S3FileInputSource)
 
       var inputFile = "london_crime_by_lsoa.csv"
       if(args(0).equals(LocalFileInputSource)) {
@@ -125,6 +130,12 @@ object ExtractLondonCrimeData {
       timed("Exporting results to csv", saveDataFrameToCsv(totalCrimesByYearAndLsoa, buildFilePath(destinationFolder, "total_crimes_by_year_lsoa_code.csv")))
       timed("Exporting results to parquet", saveDataFrameToCsv(totalCrimesByYearAndLsoa, buildFilePath(destinationFolder, "total_crimes_by_year_lsoa_code.parquet")))
       println(timing)
+
+      if(usingS3) {
+        logger.info("Uploading results back to S3")
+        val filesForUpload = getListOfFiles(destinationFolder)
+        S3Util.uploadFiles(bucket, )
+      }
 
       logger.info("Exiting Extract London Crime data information")
     } else {

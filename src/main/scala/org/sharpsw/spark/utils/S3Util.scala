@@ -1,9 +1,10 @@
 package org.sharpsw.spark.utils
 
 import java.io.File.separator
-import java.io.{File, FileOutputStream}
+import java.io.{File, FileInputStream, FileOutputStream}
 
 import com.amazonaws.services.s3.AmazonS3ClientBuilder
+import com.amazonaws.services.s3.model.{ObjectMetadata, PutObjectRequest}
 
 object S3Util {
   private val s3Service = AmazonS3ClientBuilder.standard.build
@@ -14,7 +15,6 @@ object S3Util {
     val tokens = key.split("/")
 
     val path = new File(local)
-    //path.mkdirs()
     val fos = new FileOutputStream(new File(path.getAbsolutePath + separator + tokens.last))
     val read_buf = new Array[Byte](1024)
     var len = s3is.read(read_buf)
@@ -24,5 +24,32 @@ object S3Util {
     }
     s3is.close()
     fos.close()
+  }
+
+  def uploadFiles(bucket: String, prefix: String, files: List[String]): Unit = {
+    files.foreach(item => uploadSingleFile(bucket, item.replaceAll("\\\\", "/").replaceAll(getProperty(ProcessedFilesFolderParam), prefix), item.replaceAll("\\\\", "/")))
+  }
+
+  private def uploadSingleFile(bucket: String, key: String, uploadFileName: String): Unit = {
+
+    try {
+      val file = new File(uploadFileName)
+      val is = new FileInputStream(file)
+      val metadata = new ObjectMetadata()
+      metadata.setContentLength(file.length())
+      metadata.setContentType("text/csv")
+      metadata.setContentEncoding("UTF-8")
+
+      val tokens = key.split("/")
+      val fileName = tokens(4)
+      val fileNameParts = fileName.split('.')
+
+      val buffer = new StringBuilder
+      //buffer.append(tokens(0)).append("/").append("csv='").append(fileNameParts(0)).append("'/").append(year).append("/").append(month).append("/").append(day).append("/").append(fileNameParts(0)).append("_").append(id.replaceAll("-", "")).append(".csv")
+      s3Service.putObject(new PutObjectRequest(bucket, buffer.toString, is, metadata))
+      is.close()
+    } catch {
+      case exception: Exception => exception.printStackTrace()
+    }
   }
 }
