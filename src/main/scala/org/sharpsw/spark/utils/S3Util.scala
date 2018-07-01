@@ -27,7 +27,7 @@ object S3Util {
   }
 
   def uploadFiles(bucket: String, prefix: String, localBasePath: String, files: List[String]): Unit = {
-    files.foreach(item => uploadSingleFile(localBasePath, prefix + item.substring(localBasePath.length).replaceAll("\\\\", "/"), item))
+    files.foreach(item => uploadSingleFile(bucket, prefix + item.substring(localBasePath.length).replaceAll("\\\\", "/"), item))
   }
 
   private def uploadSingleFile(bucket: String, key: String, uploadFileName: String): Unit = {

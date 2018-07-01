@@ -27,7 +27,7 @@ object ExtractLondonCrimeData {
       @transient lazy val logger = Logger.getLogger(getClass.getName)
       logger.info("Processing London crime data information")
 
-      val sparkSession: SparkSession = if(!argsMap.contains(Master)) SparkSession.builder.appName("ExtractLondonCrimeData").getOrCreate() else SparkSession.builder.appName("ExtractLondonCrimeData").master(argsMap(Master)).config("spark.rpc.askTimeout", 800).getOrCreate()
+      val sparkSession: SparkSession = if(!argsMap.contains(Master)) SparkSession.builder.appName("ExtractLondonCrimeData").getOrCreate() else SparkSession.builder.appName("ExtractLondonCrimeData").master(argsMap(Master)).config("spark.rpc.askTimeout", 2000).getOrCreate()
 
       val usingS3 = argsMap.contains(S3FileInputSource)
 
@@ -58,7 +58,6 @@ object ExtractLondonCrimeData {
       logger.info("Printing data set schema information:")
       headerColumns.foreach(logger.info(_))
 
-      /*
       logger.info("Extracting distinct boroughs")
       val boroughs = timed("Extracting distinct boroughs", extractDistinctBoroughs(contents))
       timed("Exporting boroughs to csv", saveDataFrameToCsv(boroughs, buildFilePath(destinationFolder, "borough_csv")))
@@ -137,7 +136,7 @@ object ExtractLondonCrimeData {
       timed("Exporting results to csv", saveDataFrameToCsv(totalCrimesByYearAndLsoa, buildFilePath(destinationFolder, "total_crimes_by_year_lsoa_code_csv")))
       timed("Exporting results to parquet", saveDataFrameToCsv(totalCrimesByYearAndLsoa, buildFilePath(destinationFolder, "total_crimes_by_year_lsoa_code_parquet")))
       println(timing)
-*/
+
       if(argsMap.contains(S3DestinationBucket)) {
         logger.info("Uploading results back to S3")
         val filesForUpload = getListOfFiles(destinationFolder)
