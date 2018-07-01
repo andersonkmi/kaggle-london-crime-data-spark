@@ -5,8 +5,10 @@ import java.io.{File, FileInputStream, FileOutputStream}
 
 import com.amazonaws.services.s3.AmazonS3ClientBuilder
 import com.amazonaws.services.s3.model.{ObjectMetadata, PutObjectRequest}
+import org.apache.log4j.Logger
 
 object S3Util {
+  @transient lazy val logger:Logger = Logger.getLogger(getClass.getName)
   private val s3Service = AmazonS3ClientBuilder.standard.build
 
   def downloadObject(bucket: String, key: String, local: String = "."): Unit = {
@@ -31,8 +33,8 @@ object S3Util {
   }
 
   private def uploadSingleFile(bucket: String, key: String, uploadFileName: String): Unit = {
-
     try {
+      logger.info(s"Uploading file $uploadFileName to S3")
       val file = new File(uploadFileName)
       val is = new FileInputStream(file)
       val metadata = new ObjectMetadata()
