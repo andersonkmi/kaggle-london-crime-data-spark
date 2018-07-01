@@ -26,8 +26,8 @@ object S3Util {
     fos.close()
   }
 
-  def uploadFiles(bucket: String, prefix: String, files: List[String]): Unit = {
-    files.foreach(item => uploadSingleFile(bucket, item.replaceAll("\\\\", "/").replaceAll(getProperty(ProcessedFilesFolderParam), prefix), item.replaceAll("\\\\", "/")))
+  def uploadFiles(bucket: String, prefix: String, localBasePath: String, files: List[String]): Unit = {
+    files.foreach(item => uploadSingleFile(localBasePath, prefix + item.substring(localBasePath.length).replaceAll("\\\\", "/"), item))
   }
 
   private def uploadSingleFile(bucket: String, key: String, uploadFileName: String): Unit = {
@@ -37,16 +37,16 @@ object S3Util {
       val is = new FileInputStream(file)
       val metadata = new ObjectMetadata()
       metadata.setContentLength(file.length())
-      metadata.setContentType("text/csv")
-      metadata.setContentEncoding("UTF-8")
+      //metadata.setContentType("text/csv")
+      //metadata.setContentEncoding("UTF-8")
 
-      val tokens = key.split("/")
-      val fileName = tokens(4)
-      val fileNameParts = fileName.split('.')
+      //val tokens = key.split("/")
+      //val fileName = tokens(4)
+      //val fileNameParts = fileName.split('.')
 
-      val buffer = new StringBuilder
+      //val buffer = new StringBuilder
       //buffer.append(tokens(0)).append("/").append("csv='").append(fileNameParts(0)).append("'/").append(year).append("/").append(month).append("/").append(day).append("/").append(fileNameParts(0)).append("_").append(id.replaceAll("-", "")).append(".csv")
-      s3Service.putObject(new PutObjectRequest(bucket, buffer.toString, is, metadata))
+      s3Service.putObject(new PutObjectRequest(bucket, key, is, metadata))
       is.close()
     } catch {
       case exception: Exception => exception.printStackTrace()

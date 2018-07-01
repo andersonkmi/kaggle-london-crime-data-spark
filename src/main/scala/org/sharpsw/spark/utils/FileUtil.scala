@@ -7,7 +7,7 @@ object FileUtil {
     val root = new File(dir)
 
     if (root.exists && root.isDirectory) {
-      getRecursiveListOfFiles(root).map(item => item.getAbsolutePath).toList
+      getRecursiveListOfFiles(root).map(item => item.getAbsolutePath).filter(item => item.endsWith(".csv") || item.endsWith(".parquet")).toList
     } else {
       List[String]()
     }
