@@ -31,54 +31,54 @@ $ run --aws-s3 bucket/path/london_crime_by_lsoa.csv --destination D:\temp --mast
 
 At the end, the following folders are created inside the project:
 
-* _borough.csv_
-* _lsoa.csv_
-* _categories.csv_
-* _major_category.csv_
-* _minor_category.csv_
-* _total_crimes_by_borough.csv_
-* _total_crimes_by_major_category.csv_
-* _total_crimes_by_minor_category.csv_
-* _total_crimes_by_borough_year.csv_
-* _total_crimes_by_major_category_year.csv_
-* _total_crimes_by_minor_category_year.csv_
-* _total_crimes_by_year.csv_
-* _total_crimes_by_year_month.csv_
-* _crime_percentage_2016.csv_
-* _crime_percentage_2015.csv_
-* _crime_percentage_2014.csv_
-* _crime_percentage_2013.csv_
-* _crime_percentage_2012.csv_
-* _crime_percentage_2011.csv_
-* _crime_percentage_2010.csv_
-* _crime_percentage_2009.csv_
-* _crime_percentage_2008.csv_
-* _total_crimes_by_year_lsoa_code.csv_
+* _borough_csv_
+* _lsoa_csv_
+* _categories_csv_
+* _major_category_csv_
+* _minor_category_csv_
+* _total_crimes_by_borough_csv_
+* _total_crimes_by_major_category_csv_
+* _total_crimes_by_minor_category_csv_
+* _total_crimes_by_borough_year_csv_
+* _total_crimes_by_major_category_year_csv_
+* _total_crimes_by_minor_category_year_csv_
+* _total_crimes_by_year_csv_
+* _total_crimes_by_year_month_csv_
+* _crime_percentage_2016_csv_
+* _crime_percentage_2015_csv_
+* _crime_percentage_2014_csv_
+* _crime_percentage_2013_csv_
+* _crime_percentage_2012_csv_
+* _crime_percentage_2011_csv_
+* _crime_percentage_2010_csv_
+* _crime_percentage_2009_csv_
+* _crime_percentage_2008_csv_
+* _total_crimes_by_year_lsoa_code_csv_
 
 The following folders are also created containing the parquet files:
-* _borough.parquet_
-* _lsoa.parquet_
-* _categories.parquet_
-* _major_category.parquet_
-* _minor_category.parquet_
-* _total_crimes_by_borough.parquet_
-* _total_crimes_by_major_category.parquet_
-* _total_crimes_by_minor_category.parquet_
-* _total_crimes_by_borough_year.parquet_
-* _total_crimes_by_major_category_year.parquet_
-* _total_crimes_by_minor_category_year.parquet_
-* _total_crimes_by_year.parquet_
-* _total_crimes_by_year_month.parquet_
-* _crime_percentage_2016.parquet_
-* _crime_percentage_2015.parquet_
-* _crime_percentage_2014.parquet_
-* _crime_percentage_2013.parquet_
-* _crime_percentage_2012.parquet_
-* _crime_percentage_2011.parquet_
-* _crime_percentage_2010.parquet_
-* _crime_percentage_2009.parquet_
-* _crime_percentage_2008.parquet_
-* _total_crimes_by_year_lsoa_code.parquet_
+* _borough_parquet_
+* _lsoa_parquet_
+* _categories_parquet_
+* _major_category_parquet_
+* _minor_category_parquet_
+* _total_crimes_by_borough_parquet_
+* _total_crimes_by_major_category_parquet_
+* _total_crimes_by_minor_category_parquet_
+* _total_crimes_by_borough_year_parquet_
+* _total_crimes_by_major_category_year_parquet_
+* _total_crimes_by_minor_category_year_parquet_
+* _total_crimes_by_year_parquet_
+* _total_crimes_by_year_month_parquet_
+* _crime_percentage_2016_parquet_
+* _crime_percentage_2015_parquet_
+* _crime_percentage_2014_parquet_
+* _crime_percentage_2013_parquet_
+* _crime_percentage_2012_parquet_
+* _crime_percentage_2011_parquet_
+* _crime_percentage_2010_parquet_
+* _crime_percentage_2009_parquet_
+* _crime_percentage_2008_parquet_
+* _total_crimes_by_year_lsoa_code_parquet_
 
 
 each containing the results of each filter applied to the original data set.
@@ -99,24 +99,24 @@ Wait for the unit tests finish the execution to see the results.
 In order to run the program as standalone mode and using the CSV from S3, the following command can be used (assuming Windows machine):
 ```
 $ sbt 
-$ sbt:kaggle-london-crime-data-saprk> run --aws-s3 org.sharpsw.spark/kaggle-london-crime-data/input/london_crime_by_lsoa.csv --destination D:\temp --master local[*]
+$ sbt:kaggle-london-crime-data-saprk> run --aws-s3 org.sharpsw.spark/kaggle-london-crime-data/input/london_crime_by_lsoa.csv --destination D:\temp --s3-bucket bucket --s3-prefix s3-prefix --master local[*]
 ```
 
 In order to run the program as standalone mode and using the CSV locally, the following command can be used (assuming Windows machine):
 ```
 $ sbt 
-$ sbt:kaggle-london-crime-data-saprk> run --local london_crime_by_lsoa.csv --destination D:\temp --master local[*]
+$ sbt:kaggle-london-crime-data-saprk> run --local london_crime_by_lsoa.csv --destination D:\temp --s3-bucket bucket --s3-prefix s3-prefix --master local[*]
 ```
 
 ## 4. Executing on Spark - local mode
 In order to run the program inside Spark, the following command can be used (assuming Windows machine):
 ```
-$ spark-submit --master local[*] --jars aws-java-sdk-kms-1.11.354.jar,aws-java-sdk-s3-1.11.354.jar,aws-java-sdk-core-1.11.354.jar --class org.sharpsw.spark.ExtractLondonCrimeData target\scala-2.11\kaggle-london-crime-data-spark_2.11-<appVersion>.jar --aws-s3 org.sharpsw.spark/kaggle-london-crime-data/input/london_crime_by_lsoa.csv --destination D:\temp
+$ spark-submit --master local[*] --jars aws-java-sdk-kms-1.11.354.jar,aws-java-sdk-s3-1.11.354.jar,aws-java-sdk-core-1.11.354.jar --class org.sharpsw.spark.ExtractLondonCrimeData target\scala-2.11\kaggle-london-crime-data-spark_2.11-<appVersion>.jar --aws-s3 org.sharpsw.spark/kaggle-london-crime-data/input/london_crime_by_lsoa.csv --destination D:\temp --s3-bucket bucket --s3-prefix s3-prefix
 ```
 
 In order to run the program inside Spark using a local CSV, the following command can be used (assuming Windows machine):
 ```
-$ spark-submit --master local[*] --jars aws-java-sdk-kms-1.11.354.jar,aws-java-sdk-s3-1.11.354.jar,aws-java-sdk-core-1.11.354.jar --class org.sharpsw.spark.ExtractLondonCrimeData target\scala-2.11\kaggle-london-crime-data-spark_2.11-<appVersion>.jar --local london_crime_by_lsoa.csv --destination D:\temp
+$ spark-submit --master local[*] --jars aws-java-sdk-kms-1.11.354.jar,aws-java-sdk-s3-1.11.354.jar,aws-java-sdk-core-1.11.354.jar --class org.sharpsw.spark.ExtractLondonCrimeData target\scala-2.11\kaggle-london-crime-data-spark_2.11-<appVersion>.jar --local london_crime_by_lsoa.csv --destination D:\temp --s3-bucket bucket --s3-prefix s3-prefix
 ```
 
 ## 5. References
