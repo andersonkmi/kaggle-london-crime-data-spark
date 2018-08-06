@@ -1,14 +1,12 @@
 package org.sharpsw.spark
 
-import java.nio.file.FileSystems.getDefault
-
 import org.apache.log4j.{Level, Logger}
 import org.apache.spark.sql.SparkSession
 import org.sharpsw.spark.utils.DataFrameUtil.{saveDataFrameToCsv, saveDataFrameToParquet}
 import org.sharpsw.spark.utils.TraceUtil.{timed, timing}
 import LondonCrimeDataExplorer._
 import org.sharpsw.spark.utils.ArgsUtil.parseArgs
-import org.sharpsw.spark.utils.FileUtil.getListOfFiles
+import org.sharpsw.spark.utils.FileUtil.{getListOfFiles,buildFilePath}
 import org.sharpsw.spark.utils.S3Util.{downloadObject, uploadFiles}
 
 object ExtractLondonCrimeData {
@@ -19,12 +17,14 @@ object ExtractLondonCrimeData {
   private val Destination:String = "--destination"
   private val Master: String = "--master"
 
+  @transient lazy val logger = Logger.getLogger(getClass.getName)
+  Logger.getLogger("org.apache").setLevel(Level.ERROR)
+
   def main(args: Array[String]): Unit = {
 
     if(args.nonEmpty) {
       val argsMap = parseArgs(args)
 
-      @transient lazy val logger = Logger.getLogger(getClass.getName)
       logger.info("Processing London crime data information")
 
       val sparkSession: SparkSession = if(!argsMap.contains(Master)) SparkSession.builder.appName("ExtractLondonCrimeData").getOrCreate() else SparkSession.builder.appName("ExtractLondonCrimeData").master(argsMap(Master)).config("spark.rpc.askTimeout", 2000).getOrCreate()
@@ -48,7 +48,6 @@ object ExtractLondonCrimeData {
       }
 
       val destinationFolder = argsMap(Destination)
-      Logger.getLogger("org.apache").setLevel(Level.ERROR)
 
       logger.info(s"Reading $inputFile contents")
       val fileContents = sparkSession.sparkContext.textFile(inputFile)
@@ -147,9 +146,5 @@ object ExtractLondonCrimeData {
     } else {
       logger.error("Missing arguments.")
     }
-  }
-
-  private def buildFilePath(folder: String, fileName: String): String = {
-    s"$folder" + getDefault.getSeparator + fileName
   }
 }

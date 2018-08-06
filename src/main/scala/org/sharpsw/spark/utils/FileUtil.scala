@@ -1,6 +1,7 @@
 package org.sharpsw.spark.utils
 
 import java.io.File
+import java.nio.file.FileSystems.getDefault
 
 object FileUtil {
   def getListOfFiles(dir: String): List[String] = {
@@ -18,4 +19,8 @@ object FileUtil {
     these ++ these.filter(_.isDirectory).flatMap(getRecursiveListOfFiles)
   }
 
+
+  def buildFilePath(folder: String, fileName: String): String = {
+    s"$folder" + getDefault.getSeparator + fileName
+  }
 }
