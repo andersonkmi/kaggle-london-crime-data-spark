@@ -119,6 +119,9 @@ In order to run the program inside Spark using a local CSV, the following comman
 $ spark-submit --master local[*] --jars aws-java-sdk-kms-1.11.354.jar,aws-java-sdk-s3-1.11.354.jar,aws-java-sdk-core-1.11.354.jar --class org.sharpsw.spark.ExtractLondonCrimeData target\scala-2.11\kaggle-london-crime-data-spark_2.11-<appVersion>.jar --local london_crime_by_lsoa.csv --destination D:\temp --s3-bucket bucket --s3-prefix s3-prefix
 ```
 
-## 5. References
+## 5. Changelog
+All changes are listed in [CHANGELOG.md](CHANGELOG.md)
+
+## 6. References
 
 [London crime data, 2008-2016 (Kaggle) - last used in May 2018](https://www.kaggle.com/jboysen/london-crime/data)
