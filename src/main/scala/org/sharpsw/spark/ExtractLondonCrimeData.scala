@@ -6,8 +6,9 @@ import org.sharpsw.spark.utils.DataFrameUtil.{saveDataFrameToCsv, saveDataFrameT
 import org.sharpsw.spark.utils.TraceUtil.{timed, timing}
 import LondonCrimeDataExplorer._
 import org.sharpsw.spark.utils.ArgsUtil.parseArgs
-import org.sharpsw.spark.utils.FileUtil.{getListOfFiles,buildFilePath}
+import org.sharpsw.spark.utils.FileUtil.{buildFilePath, getListOfFiles}
 import org.sharpsw.spark.utils.S3Util.{downloadObject, uploadFiles}
+import org.sharpsw.spark.utils.ZipUtils.unZipIt
 
 object ExtractLondonCrimeData {
   private val LocalFileInputSource:String = "--local"
@@ -16,6 +17,8 @@ object ExtractLondonCrimeData {
   private val S3DestinationPrefix:String = "--s3-dest-prefix"
   private val Destination:String = "--destination"
   private val Master: String = "--master"
+
+  private val ZipFileName: String = "london-crime.zip"
 
   @transient lazy val logger = Logger.getLogger(getClass.getName)
   Logger.getLogger("org.apache").setLevel(Level.ERROR)
@@ -32,17 +35,17 @@ object ExtractLondonCrimeData {
       val usingS3 = argsMap.contains(S3FileInputSource)
 
       var inputFile = "london_crime_by_lsoa.csv"
+
       if(usingS3) {
         val originalPath = argsMap(S3FileInputSource)
         val tokens = originalPath.split("/")
-        inputFile = tokens.last
 
         val bucket = tokens.head
         val key = tokens.tail.mkString("/")
 
         logger.info(s"Downloading object $key from bucket $bucket")
         downloadObject(bucket, key)
-
+        unZipIt(ZipFileName, ".")
       } else {
         inputFile = argsMap(LocalFileInputSource)
       }
@@ -142,7 +145,7 @@ object ExtractLondonCrimeData {
         uploadFiles(argsMap(S3DestinationBucket), argsMap(S3DestinationPrefix), argsMap(Destination), filesForUpload)
       }
 
-      logger.info("Exiting Extract London Crime data information")
+      logger.info("Finished Extract London Crime data information")
     } else {
       logger.error("Missing arguments.")
     }
