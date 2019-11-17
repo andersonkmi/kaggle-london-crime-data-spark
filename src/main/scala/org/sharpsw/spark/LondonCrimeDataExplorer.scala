@@ -6,7 +6,7 @@ import org.apache.spark.sql.{DataFrame, Row, SparkSession}
 import org.apache.spark.sql.expressions.Window
 import org.apache.spark.sql.functions.{asc, col, desc, sum}
 import org.apache.spark.sql.types.{IntegerType, StringType, StructField, StructType}
-import org.sharpsw.spark.utils.DataFrameUtil.extractDistinctValues
+import org.codecraftlabs.spark.utils.DataUtils.extractDistinctValues
 
 object LondonCrimeDataExplorer {
   @transient lazy val logger: Logger = Logger.getLogger(getClass.getName)
