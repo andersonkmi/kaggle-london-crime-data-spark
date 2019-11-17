@@ -4,21 +4,21 @@ organization := "org.sharpsw.spark"
 
 name := "kaggle-london-crime-data-spark"
 
-val appVersion = "1.1.3.0"
+val appVersion = "1.2.0"
 
 val appName = "kaggle-london-crime-data-spark"
 
 version := appVersion
 
-scalaVersion := "2.11.8"
+scalaVersion := "2.12.10"
 
 resolvers += Classpaths.typesafeReleases
 
 libraryDependencies ++= Seq(
-  "org.apache.spark" % "spark-core_2.11" % "2.2.1",
-  "org.apache.spark" % "spark-sql_2.11" % "2.2.1",
-  "com.amazonaws" % "aws-java-sdk-s3" % "1.11.354",
-  //"org.apache.hadoop" % "hadoop-aws" % "2.7.5",
-  //"com.amazonaws" % "aws-java-sdk" % "1.7.4",
+  "org.apache.spark" %% "spark-core" % "2.4.4",
+  "org.apache.spark" %% "spark-sql" % "2.4.4",
+  "org.json4s" %% "json4s-jackson" % "3.6.2",
+  "org.scala-lang.modules" %% "scala-xml" % "1.1.1",
+  "org.codecraftlabs.spark" %% "spark-utils" % "1.0.5",
   scalaTest % Test
 )
