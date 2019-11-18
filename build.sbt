@@ -4,7 +4,7 @@ organization := "org.sharpsw.spark"
 
 name := "kaggle-london-crime-data-spark"
 
-val appVersion = "1.2.0"
+val appVersion = "1.2.1"
 
 val appName = "kaggle-london-crime-data-spark"
 
