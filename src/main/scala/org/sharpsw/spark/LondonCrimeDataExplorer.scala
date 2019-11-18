@@ -9,6 +9,7 @@ import org.apache.spark.sql.types.{IntegerType, StringType, StructField, StructT
 import org.codecraftlabs.spark.utils.DataUtils.extractDistinctValues
 
 object LondonCrimeDataExplorer {
+  private val Separator: String = ","
   @transient lazy val logger: Logger = Logger.getLogger(getClass.getName)
 
   private def row(line: List[String]): Row = {
@@ -31,10 +32,10 @@ object LondonCrimeDataExplorer {
 
   def readContents(contents: RDD[String], sparkSession: SparkSession): (List[String], DataFrame) = {
     logger.info("Reading file contents")
-    val headerColumns = contents.first().split(",").toList
+    val headerColumns = contents.first().split(Separator).toList
     val schema = dfSchema(headerColumns)
 
-    val data = contents.mapPartitionsWithIndex((i, it) => if (i == 0) it.drop(1) else it).map(_.split(",").toList).map(row)
+    val data = contents.mapPartitionsWithIndex((i, it) => if (i == 0) it.drop(1) else it).map(_.split(Separator).toList).map(row)
     val dataFrame = sparkSession.createDataFrame(data, schema)
     (headerColumns, dataFrame)
   }
