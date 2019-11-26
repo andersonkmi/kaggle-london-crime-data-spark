@@ -144,7 +144,7 @@ object ExtractLondonCrimeData {
 
       if(argsMap.contains(S3DestinationBucket)) {
         logger.info("Uploading results back to S3")
-        val filesForUpload = getListOfFiles(destinationFolder)
+        val filesForUpload = getListOfFiles(destinationFolder, List(".csv", ".parquet"))
         uploadFiles(argsMap(S3DestinationBucket), argsMap(S3DestinationPrefix), argsMap(Destination), filesForUpload)
       }
 
