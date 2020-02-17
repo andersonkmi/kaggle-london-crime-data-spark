@@ -2,12 +2,12 @@ package org.sharpsw.spark
 
 import org.apache.log4j.{Level, Logger}
 import org.apache.spark.sql.SparkSession
-import org.codecraftlabs.spark.utils.DataUtils.{saveDataFrameToCsv, saveDataFrameToParquet}
+import org.codecraftlabs.spark.utils.DataFrameUtil.{saveDataFrameToCsv, saveDataFrameToParquet}
 import LondonCrimeDataExplorer._
 import org.codecraftlabs.spark.utils.Timer.{timed, timing}
 import org.codecraftlabs.spark.utils.ArgsUtils.parseArgs
 import org.codecraftlabs.spark.utils.FileUtil.{buildFilePath, getListOfFiles}
-import org.codecraftlabs.spark.utils.AWSS3Utils.{downloadObject, uploadFiles}
+import org.codecraftlabs.aws.S3Util.{downloadObject, uploadFiles}
 import org.codecraftlabs.spark.utils.ZipUtils.unZipIt
 
 object ExtractLondonCrimeData {
@@ -144,7 +144,7 @@ object ExtractLondonCrimeData {
 
       if(argsMap.contains(S3DestinationBucket)) {
         logger.info("Uploading results back to S3")
-        val filesForUpload = getListOfFiles(destinationFolder, List(".csv", ".parquet"))
+        val filesForUpload = getListOfFiles(Option(destinationFolder), List(".csv", ".parquet"))
         uploadFiles(argsMap(S3DestinationBucket), argsMap(S3DestinationPrefix), argsMap(Destination), filesForUpload)
       }
 

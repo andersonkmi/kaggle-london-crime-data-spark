@@ -6,7 +6,7 @@ import org.apache.spark.sql.{DataFrame, Row, SparkSession}
 import org.apache.spark.sql.expressions.Window
 import org.apache.spark.sql.functions.{asc, col, desc, sum}
 import org.apache.spark.sql.types.{IntegerType, StringType, StructField, StructType}
-import org.codecraftlabs.spark.utils.DataUtils.extractDistinctValues
+import org.codecraftlabs.spark.utils.DataFrameUtil.extractDistinctValues
 
 object LondonCrimeDataExplorer {
   private val Separator: String = ","
