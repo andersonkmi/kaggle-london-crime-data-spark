@@ -9,6 +9,7 @@ tmp/*
 *.iws
 .*.sw?
 .idea/
+.bsp/
 target/
 *.csv
 *.parquet
