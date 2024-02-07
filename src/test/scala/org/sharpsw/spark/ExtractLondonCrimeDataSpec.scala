@@ -2,10 +2,12 @@ package org.sharpsw.spark
 
 import org.apache.spark.sql.types.{IntegerType, StringType, StructField, StructType}
 import org.apache.spark.sql.{DataFrame, Row, SparkSession}
-import org.scalatest.{BeforeAndAfterAll, FlatSpec, Matchers}
+import org.scalatest.BeforeAndAfterAll
 import LondonCrimeDataExplorer._
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
 
-class ExtractLondonCrimeDataSpec extends FlatSpec with Matchers with BeforeAndAfterAll {
+class ExtractLondonCrimeDataSpec extends AnyFlatSpec with Matchers with BeforeAndAfterAll {
   val sparkSession: SparkSession = SparkSession.builder.appName("ExtractLondonCrimeData").master("local[*]").getOrCreate()
   import sparkSession.implicits._
 
